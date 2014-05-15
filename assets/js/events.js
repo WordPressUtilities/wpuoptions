@@ -78,13 +78,24 @@ var wputh_options_set_media = function() {
         wpuopt_file_frame.on('select', function() {
             // We set multiple to false so only get one image from the uploader
             var attachment = wpuopt_file_frame.state().get('selection').first().toJSON(),
-                $preview = jQuery('#preview-' + wpuopt_datafor);
+                $preview = jQuery('#preview-' + wpuopt_datafor),
+                previewContent = '<div class="wpu-options-upload-preview"><span class="x">&times;</span>';
+
+            if ($preview.data('type') == 'file') {
+                var att = attachment.url;
+                att = att.replace($preview.data('removethis'),'');
+                previewContent += '<div class="wpu-options-upload-preview--file">' + att + '</div>';
+            }
+            else {
+                previewContent += '<img src="' + attachment.url + '" />';
+            }
+            previewContent += '</div>';
 
             // Set attachment ID
             jQuery('#' + wpuopt_datafor).attr('value', attachment.id);
 
             // Set preview image
-            $preview.html('<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="' + attachment.url + '" /></div>');
+            $preview.html(previewContent);
 
             // Change button label
             $this.html($preview.attr('data-label'));

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.6.1
+Version: 4.7
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -123,7 +123,7 @@ class WPUOptions {
     function add_assets_js() {
         if ( isset( $_GET['page'] ) && $_GET['page'] == 'wpuoptions/wpuoptions.php' ) {
             wp_enqueue_media();
-            wp_enqueue_script( 'wpuoptions_scripts', plugin_dir_url( __FILE__ ) . '/assets/js/events.js' );
+            wp_enqueue_script( 'wpuoptions_scripts', plugin_dir_url( __FILE__ ) . '/assets/js/events.js', array(), '4.7' );
             wp_enqueue_script( 'wpuoptions_modernizr', plugin_dir_url( __FILE__ ) . '/assets/js/modernizr.custom.15313.js' );
             wp_enqueue_script( 'wpuoptions_jqueryui', plugin_dir_url( __FILE__ ) . '/assets/js/jquery-ui-1.10.3.custom.min.js' );
             wp_enqueue_script( 'wpuoptions_inputcolorpolyfill', plugin_dir_url( __FILE__ ) . '/assets/js/color-polyfill.js' );
@@ -333,6 +333,7 @@ class WPUOptions {
             }
         }
         $content = '';
+        $upload_dir = wp_upload_dir();
         foreach ( $fields_versions as $field_version ) {
             $idf = $this->get_field_id( $field_version['prefix_opt'] . $field_version['id'] );
             $field = $this->get_field_datas( $field_version['id'], $field_version['field'] );
@@ -365,20 +366,32 @@ class WPUOptions {
                     $content .= $content_editor;
                 }
                 break;
+            case 'file':
             case 'media':
-                $img = '';
                 $btn_label = __( 'Add a picture', 'wpuoptions' );
                 $btn_edit_label = __( 'Change this picture', 'wpuoptions' );
+                $btn_confirm_delete = __( 'Do you really want to remove this image ?', 'wpuoptions' );
+                if($field['type'] == 'file'){
+                    $btn_label = __( 'Add a file', 'wpuoptions' );
+                    $btn_edit_label = __( 'Change this file', 'wpuoptions' );
+                    $btn_confirm_delete = __( 'Do you really want to remove this file ?', 'wpuoptions' );
+                }
                 $btn_label_display = $btn_label;
+                $content_preview = '';
                 if ( is_numeric( $value ) ) {
                     $image = wp_get_attachment_image_src( $value, 'big' );
                     if ( isset( $image[0] ) ) {
-                        $img = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="'.$image[0]. '" alt="" /></div>';
-                        $btn_label_display = $btn_edit_label;
+                        $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="'.$image[0]. '" alt="" /></div>';
                     }
+                    else {
+                        $file = wp_get_attachment_url( $value );
+                        $file = str_replace($upload_dir['baseurl'],'',$file);
+                        $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><div class="wpu-options-upload-preview--file">'.$file.'</div></div>';
+                    }
+                    $btn_label_display = $btn_edit_label;
                 }
 
-                $content .= '<div data-confirm="'.__( 'Do you really want to remove this image ?', 'wpuoptions' ).'" data-defaultlabel="'.esc_attr( $btn_label ).'" data-label="'.esc_attr( $btn_edit_label ).'" id="preview-'.$idf.'">'.$img.'</div>'.
+                $content .= '<div data-removethis="'.$upload_dir['baseurl'].'" data-type="'.$field['type'].'" data-confirm="'.$btn_confirm_delete.'" data-defaultlabel="'.esc_attr( $btn_label ).'" data-label="'.esc_attr( $btn_edit_label ).'" id="preview-'.$idf.'">'.$content_preview.'</div>'.
                     '<a href="#" data-for="'.$idf.'" class="button button-small wpuoptions_add_media">'.$btn_label_display.'</a>'.
                     '<input class="hidden-value" type="hidden" ' . $idname . ' value="' . $value . '" />';
                 break;

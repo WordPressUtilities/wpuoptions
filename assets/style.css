@@ -15,10 +15,18 @@
 .wpu-options-upload-preview {
     z-index: 1;
     position: relative;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     margin-bottom: 5px;
     max-height: 140px;
     max-width: 170px;
     outline: 1px solid #ccc;
+}
+
+.wpu-options-upload-preview--file {
+    padding: 5px 5px 5px 25px;
+    -ms-word-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .wpu-options-upload-preview .x {
@@ -42,8 +50,8 @@
 }
 
 .wpu-options-upload-preview img {
-    width: auto;
     display: block;
+    width: auto;
     height: auto;
     max-height: 100%;
     max-width: 100%;

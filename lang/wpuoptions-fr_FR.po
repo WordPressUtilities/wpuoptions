@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2014-01-23 23:10+0100\n"
+"POT-Creation-Date: 2014-05-15 22:35+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Kevin <kevin@rocher.me>\n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.3\n"
+"X-Generator: Poedit 1.6.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-KeywordsList: __;_e\n"
@@ -93,39 +93,51 @@ msgstr "Echec !"
 msgid "Update"
 msgstr "Mettre à jour"
 
-#: .././wpuoptions.php:360
+#: .././wpuoptions.php:361
 msgid "Edit this text"
 msgstr "Modifier ce texte"
 
-#: .././wpuoptions.php:370
+#: .././wpuoptions.php:371
 msgid "Add a picture"
 msgstr "Ajouter une image"
 
-#: .././wpuoptions.php:371
+#: .././wpuoptions.php:372
 msgid "Change this picture"
 msgstr "Modifier cette image"
 
-#: .././wpuoptions.php:381
+#: .././wpuoptions.php:373
 msgid "Do you really want to remove this image ?"
 msgstr "Voulez-vous vraiment retirer cette image ?"
 
-#: .././wpuoptions.php:400
+#: .././wpuoptions.php:375
+msgid "Add a file"
+msgstr "Ajouter un fichier"
+
+#: .././wpuoptions.php:376
+msgid "Change this file"
+msgstr "Modifier ce fichier"
+
+#: .././wpuoptions.php:377
+msgid "Do you really want to remove this file ?"
+msgstr "Voulez-vous vraiment retirer ce fichier ?"
+
+#: .././wpuoptions.php:413
 #, php-format
 msgid "Select a %s"
 msgstr "Sélectionner un %s"
 
-#: .././wpuoptions.php:412
+#: .././wpuoptions.php:425
 msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
-#: .././wpuoptions.php:452
+#: .././wpuoptions.php:465
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:452
+#: .././wpuoptions.php:465
 msgid "Yes"
 msgstr "Oui"
 
-#: .././wpuoptions.php:491
+#: .././wpuoptions.php:504
 msgid "Export options"
 msgstr "Exporter les options"
