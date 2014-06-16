@@ -2,7 +2,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.7
+Version: 4.8
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -577,8 +577,9 @@ class WPUOptions {
      * @return array
      */
     private function get_languages() {
-        global $q_config;
+        global $q_config, $polylang;
         $languages = array();
+
         // Obtaining from Qtranslate
         if ( isset( $q_config['enabled_languages'] ) ) {
             foreach ( $q_config['enabled_languages'] as $lang ) {
@@ -587,10 +588,16 @@ class WPUOptions {
                 }
             }
         }
+
+        // Obtaining from Polylang
+        if (function_exists('pll_the_languages') && is_object($polylang)){
+            $poly_langs = $polylang->model->get_languages_list();
+            foreach($poly_langs as $lang){
+                $languages[$lang->slug] = $lang->name;
+            }
+        }
         return $languages;
     }
-
-
 }
 
 
