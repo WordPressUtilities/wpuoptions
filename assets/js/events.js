@@ -1,8 +1,22 @@
 jQuery(document).ready(function($) {
+    var form = jQuery('.wpu-options-form');
     wputh_options_set_media();
     wputh_options_set_accordion();
     wputh_options_set_editor();
+    wputh_options_set_polyfills(form);
 });
+
+/* ----------------------------------------------------------
+  Set polyfills
+---------------------------------------------------------- */
+
+var wputh_options_set_polyfills = function(form) {
+    form.find('input[type=date]').each(function() {
+        jQuery(this).attr('type', 'text').datepicker({
+            dateFormat: 'dd/mm/yy'
+        });
+    });
+}
 
 /* ----------------------------------------------------------
   Set Editor
@@ -49,7 +63,6 @@ var wputh_options_set_media = function() {
         $td.find('.hidden-value').val('');
 
         // Set default text to button
-        console.log($td.find('.wpuoptions_add_media'), defaultLabel);
         $td.find('.wpuoptions_add_media').text(defaultLabel);
     });
     // Add media
@@ -83,7 +96,7 @@ var wputh_options_set_media = function() {
 
             if ($preview.data('type') == 'file') {
                 var att = attachment.url;
-                att = att.replace($preview.data('removethis'),'');
+                att = att.replace($preview.data('removethis'), '');
                 previewContent += '<div class="wpu-options-upload-preview--file">' + att + '</div>';
             }
             else {
