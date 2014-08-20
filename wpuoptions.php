@@ -2,7 +2,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.8
+Version: 4.8.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -329,6 +329,7 @@ class WPUOptions {
                     'field' => $field,
                     'prefix_label' => '['.$idlang.'] ',
                     'prefix_opt' => $idlang . '___',
+                    'lang' => $lang,
                 );
             }
         }
@@ -435,6 +436,7 @@ class WPUOptions {
             case 'color':
             case 'date':
             case 'email':
+            case 'number':
             case 'url':
                 $content .= '<input type="'.$field['type'].'" ' . $idname . ' value="' . $value . '" />';
                 break;
