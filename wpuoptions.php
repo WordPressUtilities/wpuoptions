@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.9
+Version: 4.10
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -120,10 +120,9 @@ class WPUOptions
                 'jquery-ui-widget',
                 'jquery-ui-mouse',
                 'jquery-ui-slider',
-                'jquery-ui-datepicker'
+                'jquery-ui-datepicker',
+                'iris',
             ) , '4.7');
-            wp_enqueue_script('wpuoptions_modernizr', plugin_dir_url(__FILE__) . '/assets/js/modernizr.custom.15313.js');
-            wp_enqueue_script('wpuoptions_inputcolorpolyfill', plugin_dir_url(__FILE__) . '/assets/js/color-polyfill.js');
         }
     }
 

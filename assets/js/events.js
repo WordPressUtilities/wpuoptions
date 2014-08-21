@@ -16,6 +16,10 @@ var wputh_options_set_polyfills = function(form) {
             dateFormat: 'dd/mm/yy'
         });
     });
+
+    form.find('input[type=color]').each(function() {
+        jQuery(this).attr('type', 'text').iris();
+    });
 }
 
 /* ----------------------------------------------------------
