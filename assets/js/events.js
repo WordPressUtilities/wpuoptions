@@ -132,10 +132,23 @@ var wputh_options_set_accordion = function() {
     var form = jQuery('.wpu-options-form'),
         boxes = form.find('.wpu-options-form__box');
 
-    boxes.addClass('is-closed');
-    boxes.eq(0).removeClass('is-closed');
     form.on('click', 'h3', function() {
+        var $this = jQuery(this);
         boxes.addClass('is-closed');
-        jQuery(this).closest('.wpu-options-form__box').removeClass('is-closed');
+        // Open and save state of first box
+        window.location.hash = '#' + $this.attr('id');
+        $this.closest('.wpu-options-form__box').removeClass('is-closed');
     });
+
+    // Initial class
+    boxes.addClass('is-closed');
+
+    // Set opened box
+    if (window.location.hash && jQuery(window.location.hash).length > 0) {
+        jQuery(window.location.hash).trigger('click');
+    }
+    else {
+        boxes.eq(0).removeClass('is-closed');
+    }
+
 };

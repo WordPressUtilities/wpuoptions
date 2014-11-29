@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.10
+Version: 4.11
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -281,8 +281,8 @@ class WPUOptions
                 if (empty($box['name'])) {
                     $box['name'] = ucfirst($idbox);
                 }
-                $content.= '<h3 class="wpu-options-form__title">' . $box['name'] . '</h3>';
-                $content.= '<table style="table-layout:fixed;width:670px;margin-top:20px;border-spacing:5px">' . $content_tmp . '</table>';
+                $content.= '<h3 id="box-' . $idbox . '" class="wpu-options-form__title">' . $box['name'] . '</h3>';
+                $content.= '<table id="wpu-options-form__table">' . $content_tmp . '</table>';
                 $content.= '</div>';
             }
         }
@@ -418,6 +418,12 @@ class WPUOptions
                     $content.= '</select>';
                     break;
 
+                case 'radio':
+                    foreach ($field['datas'] as $key => $var) {
+                        $content.= '<label class="label-radio"><input type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . ($key == $value ? 'checked="checked"' : '') . '/> ' . htmlentities($var) . '</label>';
+                    }
+                    break;
+
                 case 'textarea':
                     $content.= '<textarea ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
                     break;
@@ -543,6 +549,7 @@ class WPUOptions
                 }
                 break;
 
+            case 'radio':
             case 'select':
                 if (!array_key_exists($value, $field['datas'])) {
                     $return = false;

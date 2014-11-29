@@ -8,6 +8,17 @@
     padding-top: 20px;
 }
 
+.wpu-options-form .label-radio {
+    margin-right: 15px;
+}
+
+.wpu-options-form__title {
+    width: 670px;
+    margin-top: 20px;
+    border-spacing: 5px;
+    table-layout: fixed;
+}
+
 /* ----------------------------------------------------------
   Upload media
 ---------------------------------------------------------- */
