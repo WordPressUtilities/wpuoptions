@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.11
+Version: 4.11.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -641,7 +641,7 @@ function wputh_l18n_get_option($name) {
  * @return string
  */
 function wpu_options_get_media($option_name, $size = 'thumbnail') {
-    $attachment_details = array(
+    $default_attachment_details = array(
         'title' => '',
         'caption' => '',
         'alt' => '',
@@ -651,6 +651,8 @@ function wpu_options_get_media($option_name, $size = 'thumbnail') {
         'width' => 0,
         'height' => 0
     );
+
+    $attachment_details = $default_attachment_details;
 
     $attachment_id = get_option($option_name);
     $attachment = get_post($attachment_id);
@@ -663,11 +665,14 @@ function wpu_options_get_media($option_name, $size = 'thumbnail') {
         $attachment_details['src'] = $attachment->guid;
     }
 
-    $image = wp_get_attachment_image_src($att_id, $size);
+    $image = wp_get_attachment_image_src($attachment_id, $size);
     if (isset($image[0])) {
         $attachment_details['src'] = $image[0];
         $attachment_details['width'] = $image[1];
         $attachment_details['height'] = $image[2];
+    } else {
+        $attachment_details = $default_attachment_details;
+        $attachment_details['src'] = get_stylesheet_directory_uri() . '/images/options/' . $option_name . '.jpg';
     }
 
     return $attachment_details;
