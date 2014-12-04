@@ -73,14 +73,18 @@
 ---------------------------------------------------------- */
 
 .wpuoptions-view-editor-switch .original {
-    margin-bottom: 5px;
-    padding: 10px;
+    display: block;
+    padding: 0 10px;
     max-height: 150px;
     overflow: auto;
     outline: 1px solid #d0d0d0;
 }
 
-.wpuoptions-view-editor-switch .editor {
+.wpuoptions-view-editor-switch .edit-link {
+    margin-top: 5px;
+}
+
+.wpuoptions-view-editor-switch .editor-view {
     display: none;
 }
 

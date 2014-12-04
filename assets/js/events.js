@@ -28,12 +28,8 @@ var wputh_options_set_polyfills = function(form) {
 
 var wputh_options_set_editor = function() {
     jQuery('.wpuoptions-view-editor-switch').on('click', '.edit-link', function(e) {
-        var $this = jQuery(this),
-            $parent = $this.closest('.wpuoptions-view-editor-switch');
-
-        $this.remove();
-        $parent.find('.editor').show();
-        $parent.find('.original').remove();
+        e.preventDefault();
+        jQuery(this).closest('.wpuoptions-view-editor-switch').find('.editor-view, .original-view').toggle();
     });
 };
 

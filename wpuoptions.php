@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.11.1
+Version: 4.11.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -346,9 +346,8 @@ class WPUOptions
                     $content_editor = ob_get_clean();
                     if (!empty($originalvalue)) {
                         $content.= '<div class="wpuoptions-view-editor-switch">';
-                        $content.= '<div class="original">' . apply_filters('the_content', $originalvalue) . '</div>';
-                        $content.= '<a class="edit-link button button-small" href="#" role="button">' . __('Edit this text', 'wpuoptions') . '</a>';
-                        $content.= '<div class="editor">' . $content_editor . '</div>';
+                        $content.= '<div class="original-view"><div class="original">' . apply_filters('the_content', $originalvalue) . '</div><a class="edit-link button button-small" href="#" role="button">' . __('Edit this text', 'wpuoptions') . '</a>' . '</div>';
+                        $content.= '<div class="editor-view">' . $content_editor . '<a class="edit-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' .'</div>';
                         $content.= '</div>';
                     } else {
                         $content.= $content_editor;
