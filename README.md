@@ -9,6 +9,21 @@ How to install :
 * Put this folder to your wp-content/plugins/ folder.
 * Activate the plugin in "Plugins" admin section.
 
+How to add tabs :
+---
+
+Put the code below in your theme's functions.php file. Add new tabs to your convenance.
+
+    add_filter( 'wpu_options_tabs', 'set_wpu_options_tabs', 10, 3 );
+
+    function set_wpu_options_tabs( $tabs ) {
+        $tabs['special_tab'] = array(
+            'name' => 'Special tab'
+        );
+        return $tabs;
+    }
+
+
 How to add boxes :
 ---
 

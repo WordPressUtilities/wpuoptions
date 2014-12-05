@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.11.2
+Version: 4.12
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -19,6 +19,12 @@ class WPUOptions
     private $default_box = array(
         'default' => array(
             'name' => ''
+        )
+    );
+
+    private $default_tab = array(
+        'default' => array(
+            'name' => 'Site options'
         )
     );
 
@@ -142,11 +148,12 @@ class WPUOptions
     function admin_settings() {
         $fields = apply_filters('wpu_options_fields', array());
         $boxes = apply_filters('wpu_options_boxes', $this->default_box);
+        $tabs = apply_filters('wpu_options_tabs', $this->default_tab);
         $content = '<div class="wrap">';
         $content.= '<div id="icon-tools" class="icon32"></div><h2>' . $this->options['plugin_publicname'] . '</h2>';
         if (!empty($fields)) {
             $content.= $this->admin_update($fields, $boxes);
-            $content.= $this->admin_form($fields, $boxes);
+            $content.= $this->admin_form($fields, $boxes, $tabs);
         } else {
             $content.= '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
         }
@@ -265,9 +272,31 @@ class WPUOptions
      * @param unknown $boxes  (optional)
      * @return unknown
      */
-    private function admin_form($fields = array() , $boxes = array()) {
+    private function admin_form($fields = array() , $boxes = array() , $tabs = array()) {
+
+        $current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $tabs) ? $_GET['tab'] : 'default';
+
         $content = '<form action="" method="post" class="wpu-options-form">';
+
+        if (count($tabs) > 1) {
+            $content.= '<div id="icon-themes" class="icon32"><br></div>';
+            $content.= '<h2 class="nav-tab-wrapper">';
+            foreach ($tabs as $idtab => $tab) {
+                $current_class = ($current_tab == $idtab ? 'nav-tab-active' : '');
+                $tab_url = '';
+                if ($idtab != 'default') {
+                    $tab_url = '&tab=' . $idtab;
+                }
+                $content.= '<a class="nav-tab ' . $current_class . '" href="' . admin_url('admin.php?page=wpuoptions/wpuoptions.php' . $tab_url) . '">' . $tab['name'] . '</a>';
+            }
+            $content.= '</h2><br />';
+        }
+
         foreach ($boxes as $idbox => $box) {
+            $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
+            if ($box_tab != $current_tab) {
+                continue;
+            }
             $content_tmp = '';
             foreach ($fields as $id => $field) {
                 if ((isset($field['box']) && $field['box'] == $idbox) || ($idbox == 'default' && !isset($field['box']))) {
@@ -347,7 +376,7 @@ class WPUOptions
                     if (!empty($originalvalue)) {
                         $content.= '<div class="wpuoptions-view-editor-switch">';
                         $content.= '<div class="original-view"><div class="original">' . apply_filters('the_content', $originalvalue) . '</div><a class="edit-link button button-small" href="#" role="button">' . __('Edit this text', 'wpuoptions') . '</a>' . '</div>';
-                        $content.= '<div class="editor-view">' . $content_editor . '<a class="edit-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' .'</div>';
+                        $content.= '<div class="editor-view">' . $content_editor . '<a class="edit-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' . '</div>';
                         $content.= '</div>';
                     } else {
                         $content.= $content_editor;
