@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.12
+Version: 4.12.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -430,7 +430,7 @@ class WPUOptions
                     while ($wpq_post_type->have_posts()) {
                         $wpq_post_type->the_post();
                         $key = get_the_ID();
-                        $content.= '<option value="' . htmlentities($key) . '" ' . ($key == $value ? 'selected="selected"' : '') . '>';
+                        $content.= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>';
                         $content.= get_the_title();
                         $content.= '</option>';
                     }
@@ -441,14 +441,14 @@ class WPUOptions
                 case 'select':
                     $content.= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . __('Select a value', 'wpuoptions') . '</option>';
                     foreach ($field['datas'] as $key => $var) {
-                        $content.= '<option value="' . htmlentities($key) . '" ' . ($key == $value ? 'selected="selected"' : '') . '>' . htmlentities($var) . '</option>';
+                        $content.= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>' . htmlentities($var) . '</option>';
                     }
                     $content.= '</select>';
                     break;
 
                 case 'radio':
                     foreach ($field['datas'] as $key => $var) {
-                        $content.= '<label class="label-radio"><input type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . ($key == $value ? 'checked="checked"' : '') . '/> ' . htmlentities($var) . '</label>';
+                        $content.= '<label class="label-radio"><input type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . checked($key, $value, 0) . '/> ' . htmlentities($var) . '</label>';
                     }
                     break;
 
