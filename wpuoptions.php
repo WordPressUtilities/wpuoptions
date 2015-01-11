@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.12.1
+Version: 4.13
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -32,6 +32,7 @@ class WPUOptions
      * Init plugin
      */
     function __construct() {
+        $this->hooks();
         if (is_admin()) {
             load_plugin_textdomain('wpuoptions', false, dirname(plugin_basename(__FILE__)) . '/lang/');
             $this->set_options();
@@ -46,12 +47,47 @@ class WPUOptions
         $this->options = array(
             'plugin_publicname' => __('Site options', 'wpuoptions') ,
             'plugin_name' => 'WPU Options',
+            'plugin_version' => '4.13',
             'plugin_userlevel' => 'manage_categories',
             'plugin_menutype' => 'admin.php',
             'plugin_pageslug' => 'wpuoptions-settings',
             'plugin_dir' => str_replace(ABSPATH, (site_url() . '/') , dirname(__FILE__)) ,
             'plugin_basename' => str_replace(ABSPATH . 'wp-content/plugins/', '', __FILE__)
         );
+    }
+
+    /**
+     * Hooks
+     */
+
+    private function hooks() {
+        add_action('init', array(&$this,
+            'set_fields'
+        ));
+        add_action('init', array(&$this,
+            'default_values'
+        ));
+    }
+
+    /**
+     * Set fields values
+     */
+    public function set_fields() {
+        $this->fields = apply_filters('wpu_options_fields', array());
+        $this->boxes = apply_filters('wpu_options_boxes', $this->default_box);
+        $this->tabs = apply_filters('wpu_options_tabs', $this->default_tab);
+    }
+
+    /**
+     * Check that every option is defined, to avoid non autoloading options
+     */
+    public function default_values() {
+        foreach ($this->fields as $id => $option) {
+            $opt = get_option($id);
+            if ($opt === false) {
+                update_option($id, '');
+            }
+        }
     }
 
     /**
@@ -79,13 +115,13 @@ class WPUOptions
      * Set admin menu
      */
     function admin_menu() {
-        add_menu_page($this->options['plugin_name'] . ' Settings', $this->options['plugin_publicname'], $this->options['plugin_userlevel'], __FILE__, array(&$this,
+        add_menu_page($this->options['plugin_name'] . ' Settings', $this->options['plugin_publicname'], $this->options['plugin_userlevel'], $this->options['plugin_pageslug'], array(&$this,
             'admin_settings'
         ) , '', 3);
-        add_submenu_page(__FILE__, __('Import', 'wpuoptions') , __('Import', 'wpuoptions') , $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
+        add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions') , __('Import', 'wpuoptions') , $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
             'admin_import_page'
         ));
-        add_submenu_page(__FILE__, __('Export', 'wpuoptions') , __('Export', 'wpuoptions') , $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-export', array(&$this,
+        add_submenu_page($this->options['plugin_pageslug'], __('Export', 'wpuoptions') , __('Export', 'wpuoptions') , $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-export', array(&$this,
             'admin_export_page'
         ));
     }
@@ -119,16 +155,16 @@ class WPUOptions
      * Enqueue JS
      */
     function add_assets_js() {
-        if (isset($_GET['page']) && $_GET['page'] == 'wpuoptions/wpuoptions.php') {
+        if (isset($_GET['page']) && $_GET['page'] == $this->options['plugin_pageslug']) {
             wp_enqueue_media();
-            wp_enqueue_script('wpuoptions_scripts', plugin_dir_url(__FILE__) . '/assets/js/events.js', array(
+            wp_enqueue_script('wpuoptions_scripts', plugins_url('assets/events.js', __FILE__) , array(
                 'jquery-ui-core',
                 'jquery-ui-widget',
                 'jquery-ui-mouse',
                 'jquery-ui-slider',
                 'jquery-ui-datepicker',
                 'iris',
-            ) , '4.7');
+            ) , $this->options['plugin_version']);
         }
     }
 
@@ -136,8 +172,8 @@ class WPUOptions
      * Enqueue CSS
      */
     function add_assets_css() {
-        if (isset($_GET['page']) && $_GET['page'] == 'wpuoptions/wpuoptions.php') {
-            wp_register_style('wpuoptions_style', plugins_url('assets/style.css', __FILE__));
+        if (isset($_GET['page']) && $_GET['page'] == $this->options['plugin_pageslug']) {
+            wp_register_style('wpuoptions_style', plugins_url('assets/style.css', __FILE__) , array() , $this->options['plugin_version']);
             wp_enqueue_style('wpuoptions_style');
         }
     }
@@ -146,14 +182,11 @@ class WPUOptions
      * Set admin page
      */
     function admin_settings() {
-        $fields = apply_filters('wpu_options_fields', array());
-        $boxes = apply_filters('wpu_options_boxes', $this->default_box);
-        $tabs = apply_filters('wpu_options_tabs', $this->default_tab);
         $content = '<div class="wrap">';
         $content.= '<div id="icon-tools" class="icon32"></div><h2>' . $this->options['plugin_publicname'] . '</h2>';
-        if (!empty($fields)) {
-            $content.= $this->admin_update($fields, $boxes);
-            $content.= $this->admin_form($fields, $boxes, $tabs);
+        if (!empty($this->fields)) {
+            $content.= $this->admin_update();
+            $content.= $this->admin_form();
         } else {
             $content.= '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
         }
@@ -199,10 +232,9 @@ class WPUOptions
     /**
      * Save new values
      *
-     * @param unknown $fields (optional)
      * @return unknown
      */
-    private function admin_update($fields = array() , $boxes = array()) {
+    private function admin_update() {
         $content = '';
         if (!isset($_POST['plugin_ok'])) {
             return;
@@ -214,7 +246,7 @@ class WPUOptions
             $updated_options = array();
             $errors = array();
             $testfields = array();
-            foreach ($fields as $id => $field) {
+            foreach ($this->fields as $id => $field) {
                 $testfields[$id] = $field;
                 if (isset($field['lang']) && !empty($languages)) {
                     foreach ($languages as $lang => $name) {
@@ -235,8 +267,8 @@ class WPUOptions
                     $test_field = $this->test_field_value($field, $new_option);
 
                     $field_label = $field['label'];
-                    if (isset($field['box']) && isset($boxes[$field['box']]['name'])) {
-                        $field_label = '<em>' . $boxes[$field['box']]['name'] . '</em> - ' . $field['label'];
+                    if (isset($field['box']) && isset($this->boxes[$field['box']]['name'])) {
+                        $field_label = '<em>' . $this->boxes[$field['box']]['name'] . '</em> - ' . $field['label'];
                     }
 
                     // Field is required and have been emptied
@@ -268,37 +300,35 @@ class WPUOptions
     /**
      * Returns admin form
      *
-     * @param unknown $fields (optional)
-     * @param unknown $boxes  (optional)
      * @return unknown
      */
-    private function admin_form($fields = array() , $boxes = array() , $tabs = array()) {
+    private function admin_form() {
 
-        $current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $tabs) ? $_GET['tab'] : 'default';
+        $current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : 'default';
 
         $content = '<form action="" method="post" class="wpu-options-form">';
 
-        if (count($tabs) > 1) {
+        if (count($this->tabs) > 1) {
             $content.= '<div id="icon-themes" class="icon32"><br></div>';
             $content.= '<h2 class="nav-tab-wrapper">';
-            foreach ($tabs as $idtab => $tab) {
+            foreach ($this->tabs as $idtab => $tab) {
                 $current_class = ($current_tab == $idtab ? 'nav-tab-active' : '');
                 $tab_url = '';
                 if ($idtab != 'default') {
                     $tab_url = '&tab=' . $idtab;
                 }
-                $content.= '<a class="nav-tab ' . $current_class . '" href="' . admin_url('admin.php?page=wpuoptions/wpuoptions.php' . $tab_url) . '">' . $tab['name'] . '</a>';
+                $content.= '<a class="nav-tab ' . $current_class . '" href="' . admin_url('admin.php?page=' . $this->options['plugin_pageslug'] . $tab_url) . '">' . $tab['name'] . '</a>';
             }
             $content.= '</h2><br />';
         }
 
-        foreach ($boxes as $idbox => $box) {
+        foreach ($this->boxes as $idbox => $box) {
             $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
             if ($box_tab != $current_tab) {
                 continue;
             }
             $content_tmp = '';
-            foreach ($fields as $id => $field) {
+            foreach ($this->fields as $id => $field) {
                 if ((isset($field['box']) && $field['box'] == $idbox) || ($idbox == 'default' && !isset($field['box']))) {
                     $content_tmp.= $this->admin_field($id, $field);
                 }
@@ -364,7 +394,7 @@ class WPUOptions
             $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
 
             $content.= '<tr class="wpu-options-box">';
-            $content.= '<td style="vertical-align:top;width: 150px;"><label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label></td>';
+            $content.= '<td class="td-label"><label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label></td>';
             $content.= '<td>';
             switch ($field['type']) {
                 case 'editor':
@@ -508,7 +538,6 @@ class WPUOptions
      * @return unknown
      */
     private function generate_export_url() {
-        $fields = apply_filters('wpu_options_fields', array());
         $languages = $this->get_languages();
 
         $site_url = str_replace(array(
@@ -521,7 +550,7 @@ class WPUOptions
         $options = array();
 
         // Array of fields:values
-        foreach ($fields as $id => $field) {
+        foreach ($this->fields as $id => $field) {
             $opt_field = $this->get_field_datas($id, $field);
 
             // If this field has i18n
