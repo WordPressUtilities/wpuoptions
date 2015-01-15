@@ -57,10 +57,17 @@
     text-align: center;
     line-height: 20px;
     color: #fff;
+    opacity: 0.30;
     background-color: #999;
     -webkit-transition: all 0.3s ease;
     transition: all 0.3s ease;
     cursor: pointer;
+    filter: alpha(opacity=30);
+}
+
+.wpu-options-upload-preview:hover .x {
+    opacity: 0.999;
+    filter: alpha(opacity=99);
 }
 
 .wpu-options-upload-preview .x:hover {
