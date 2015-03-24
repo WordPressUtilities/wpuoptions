@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.13.1
+Version: 4.14
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -440,6 +440,15 @@ class WPUOptions
                     $content.= '<div data-removethis="' . $upload_dir['baseurl'] . '" data-type="' . $field['type'] . '" data-confirm="' . $btn_confirm_delete . '" data-defaultlabel="' . esc_attr($btn_label) . '" data-label="' . esc_attr($btn_edit_label) . '" id="preview-' . $idf . '">' . $content_preview . '</div>' . '<a href="#" data-for="' . $idf . '" class="button button-small wpuoptions_add_media">' . $btn_label_display . '</a>' . '<input class="hidden-value" type="hidden" ' . $idname . ' value="' . $value . '" />';
                     break;
 
+                case 'category':
+                    $content.= wp_dropdown_categories(array(
+                        'name' => $idf,
+                        'selected' => $value,
+                        'echo' => 0,
+                        'hide_if_empty' => 1
+                    ));
+                    break;
+
                 case 'page':
                     $content.= wp_dropdown_pages(array(
                         'name' => $idf,
@@ -600,6 +609,7 @@ class WPUOptions
                 }
                 break;
 
+            case 'category':
             case 'page':
                 if (!ctype_digit($value)) {
                     $return = false;

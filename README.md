@@ -64,6 +64,7 @@ Fields types :
 * "file" : An attached file.
 * "media" : An attached file present in the Media editor.
 * "page" : A WordPress page.
+* "category" : A WordPress category.
 * "post" : A WordPress post. (default : post. Use the type in "post_type" value if available.)
 * "select" : A value inside an array present into "datas" (default : yes/no)
 * "radio" : A value inside an array present into "datas" (default : yes/no)
