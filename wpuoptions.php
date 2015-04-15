@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.15
+Version: 4.15.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
