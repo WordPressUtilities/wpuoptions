@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.15.1
+Version: 4.15.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -33,10 +33,13 @@ class WPUOptions {
     function __construct() {
         $this->hooks();
         if (is_admin()) {
-            load_plugin_textdomain('wpuoptions', false, dirname(plugin_basename(__FILE__)) . '/lang/');
             $this->set_options();
             $this->admin_hooks();
         }
+    }
+
+    function load_plugin_textdomain() {
+        load_plugin_textdomain('wpuoptions', false, dirname(plugin_basename(__FILE__)) . '/lang/');
     }
 
     /**
@@ -62,6 +65,9 @@ class WPUOptions {
      */
 
     private function hooks() {
+        add_action('plugins_loaded', array(&$this,
+            'load_plugin_textdomain'
+        ));
         add_action('init', array(&$this,
             'set_fields'
         ));
