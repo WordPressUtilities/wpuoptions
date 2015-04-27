@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.15.2
+Version: 4.16
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -690,16 +690,38 @@ $WPUOptions = new WPUOptions();
  * @param string  $name
  * @return string
  */
-function wputh_l18n_get_option($name) {
+function wputh_l18n_get_option($name, $lang = false) {
     global $q_config;
 
     $option = get_option($name);
 
+    /* Define lang */
+
+    if ($lang === false) {
+        if (isset($q_config['language'])) {
+            $lang = $q_config['language'];
+        }
+    }
+
+    /* Get meta value */
+
     if (isset($q_config['language'])) {
-        $option_l18n = get_option($q_config['language'] . '___' . $name);
+        $option_l18n = get_option($lang . '___' . $name);
         if (!empty($option_l18n)) {
             $option = $option_l18n;
         }
+    }
+
+    /* Use default language value */
+    $default_language = '';
+    if (isset($q_config['language'])) {
+        $default_language = $q_config['enabled_languages'][0];
+    }
+    $default_language = apply_filters('wputh_l18n_get_option__defaultlang', $default_language);
+
+    $use_default = apply_filters('wputh_l18n_get_option__usedefaultlang', true);
+    if (empty($option) && $use_default && $lang != $default_language) {
+        return wputh_l18n_get_option($name, $default_language);
     }
 
     return $option;
