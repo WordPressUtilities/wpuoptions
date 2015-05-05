@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.16
+Version: 4.17
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -338,7 +338,8 @@ class WPUOptions {
 
         foreach ($this->boxes as $idbox => $box) {
             $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
-            if ($box_tab != $current_tab) {
+            $box_usercan = isset($box['current_user_can']) ? current_user_can($box['current_user_can']) : true;
+            if ($box_tab != $current_tab || !$box_usercan) {
                 continue;
             }
             $content_tmp = '';
