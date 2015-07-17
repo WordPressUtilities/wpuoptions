@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.18
+Version: 4.19
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -461,6 +461,10 @@ class WPUOptions {
                 update_option($field_version['prefix_opt'] . $field_version['id'], $field['default_value']);
             }
             $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
+            $placeholder = '';
+            if (isset($field['placeholder'])) {
+                $placeholder = ' placeholder="' . esc_attr($field['placeholder']) . '"';
+            }
 
             $content.= '<tr class="wpu-options-box">';
             $content.= '<td class="td-label"><label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label></td>';
@@ -556,7 +560,7 @@ class WPUOptions {
                     }
                 break;
                 case 'textarea':
-                    $content.= '<textarea ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
+                    $content.= '<textarea '.$placeholder .' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
                 break;
 
                     /* Multiple cases */
@@ -565,10 +569,10 @@ class WPUOptions {
                 case 'email':
                 case 'number':
                 case 'url':
-                    $content.= '<input type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
+                    $content.= '<input '.$placeholder .' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
                 break;
                 default:
-                    $content.= '<input type="text" ' . $idname . ' value="' . $value . '" />';
+                    $content.= '<input '.$placeholder .' type="text" ' . $idname . ' value="' . $value . '" />';
             }
             $content.= '</td>';
             $content.= '</tr>';
