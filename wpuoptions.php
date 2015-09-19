@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.19
+Version: 4.19.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -49,12 +49,10 @@ class WPUOptions {
         $this->options = array(
             'plugin_publicname' => __('Site options', 'wpuoptions') ,
             'plugin_name' => 'WPU Options',
-            'plugin_version' => '4.13',
+            'plugin_version' => '4.19.1',
             'plugin_userlevel' => 'manage_categories',
             'plugin_menutype' => 'admin.php',
-            'plugin_pageslug' => 'wpuoptions-settings',
-            'plugin_dir' => str_replace(ABSPATH, (site_url() . '/') , dirname(__FILE__)) ,
-            'plugin_basename' => str_replace(ABSPATH . 'wp-content/plugins/', '', __FILE__)
+            'plugin_pageslug' => 'wpuoptions-settings'
         );
 
         $this->main_url = $this->options['plugin_menutype'] . '?page=' . $this->options['plugin_pageslug'];
