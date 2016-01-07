@@ -20,10 +20,47 @@
 }
 
 .wpu-options-box td.td-label {
+    z-index: 1;
+    position: relative;
     width: 150px;
     padding-right: 20px;
     font-size: 95%;
     vertical-align: top;
+}
+
+.wpu-options-helper {
+    display: inline-block;
+    width: 25px;
+    text-align: left;
+    line-height: 22px;
+    vertical-align: top;
+}
+
+.wpu-options-field-info {
+    visibility: hidden;
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 25px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 130px;
+    height: 2em;
+    padding: 0 0.5em;
+    border: 1px solid #ccc;
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 2;
+    white-space: nowrap;
+    opacity: 0;
+    background-color: #fff;
+    -webkit-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.wpu-options-box td.td-label:hover .wpu-options-field-info {
+    visibility: visible;
+    opacity: 0.999;
 }
 
 /* ----------------------------------------------------------

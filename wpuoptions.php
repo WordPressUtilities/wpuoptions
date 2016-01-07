@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.19.1
+Version: 4.20
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -49,7 +49,7 @@ class WPUOptions {
         $this->options = array(
             'plugin_publicname' => __('Site options', 'wpuoptions') ,
             'plugin_name' => 'WPU Options',
-            'plugin_version' => '4.19.1',
+            'plugin_version' => '4.20',
             'plugin_userlevel' => 'manage_categories',
             'plugin_menutype' => 'admin.php',
             'plugin_pageslug' => 'wpuoptions-settings'
@@ -465,7 +465,17 @@ class WPUOptions {
             }
 
             $content.= '<tr class="wpu-options-box">';
-            $content.= '<td class="td-label"><label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label></td>';
+            $content.= '<td class="td-label">';
+            if (current_user_can('activate_plugins')) {
+                $helper = "get_option('" . $field_version['id'] . "')";
+                if (!empty($field_version['prefix_opt'])) {
+                    $helper = "wputh_l18n_get_option('" . $field_version['id'] . "')";
+                }
+                $content.= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
+                $content.= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
+            }
+            $content.= '<label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label>';
+            $content.= '</td>';
             $content.= '<td>';
             switch ($field['type']) {
                 case 'editor':
@@ -558,7 +568,7 @@ class WPUOptions {
                     }
                 break;
                 case 'textarea':
-                    $content.= '<textarea '.$placeholder .' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
+                    $content.= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
                 break;
 
                     /* Multiple cases */
@@ -567,10 +577,10 @@ class WPUOptions {
                 case 'email':
                 case 'number':
                 case 'url':
-                    $content.= '<input '.$placeholder .' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
+                    $content.= '<input ' . $placeholder . ' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
                 break;
                 default:
-                    $content.= '<input '.$placeholder .' type="text" ' . $idname . ' value="' . $value . '" />';
+                    $content.= '<input ' . $placeholder . ' type="text" ' . $idname . ' value="' . $value . '" />';
             }
             $content.= '</td>';
             $content.= '</tr>';
@@ -694,45 +704,45 @@ class WPUOptions {
             default:
         }
         return $return;
-}
+    }
 
-/**
- * Optain an admin field id
- *
- * @param string  $id
- * @return string
- */
-private function get_field_id($id) {
-    return 'wpu_admin_id_' . $id;
-}
+    /**
+     * Optain an admin field id
+     *
+     * @param string  $id
+     * @return string
+     */
+    private function get_field_id($id) {
+        return 'wpu_admin_id_' . $id;
+    }
 
-/**
- * Obtain a list of languages
- *
- * @return array
- */
-private function get_languages() {
-    global $q_config, $polylang;
-    $languages = array();
+    /**
+     * Obtain a list of languages
+     *
+     * @return array
+     */
+    public function get_languages() {
+        global $q_config, $polylang;
+        $languages = array();
 
-    // Obtaining from Qtranslate
-    if (isset($q_config['enabled_languages'])) {
-        foreach ($q_config['enabled_languages'] as $lang) {
-            if (!in_array($lang, $languages) && isset($q_config['language_name'][$lang])) {
-                $languages[$lang] = $q_config['language_name'][$lang];
+        // Obtaining from Qtranslate
+        if (isset($q_config['enabled_languages'])) {
+            foreach ($q_config['enabled_languages'] as $lang) {
+                if (!in_array($lang, $languages) && isset($q_config['language_name'][$lang])) {
+                    $languages[$lang] = $q_config['language_name'][$lang];
+                }
             }
         }
-    }
 
-    // Obtaining from Polylang
-    if (function_exists('pll_the_languages') && is_object($polylang)) {
-        $poly_langs = $polylang->model->get_languages_list();
-        foreach ($poly_langs as $lang) {
-            $languages[$lang->slug] = $lang->name;
+        // Obtaining from Polylang
+        if (function_exists('pll_the_languages') && is_object($polylang)) {
+            $poly_langs = $polylang->model->get_languages_list();
+            foreach ($poly_langs as $lang) {
+                $languages[$lang->slug] = $lang->name;
+            }
         }
+        return $languages;
     }
-    return $languages;
-}
 }
 
 $WPUOptions = new WPUOptions();
