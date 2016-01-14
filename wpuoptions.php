@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: http://github.com/Darklg/WPUtilities
-Version: 4.20
+Version: 4.21
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -87,10 +87,14 @@ class WPUOptions {
      * Check that every option is defined, to avoid non autoloading options
      */
     public function default_values() {
-        foreach ($this->fields as $id => $option) {
+        foreach ($this->fields as $id => $field) {
+            $default_value = '';
             $opt = get_option($id);
-            if ($opt === false) {
-                update_option($id, '');
+            if ($opt === false && !isset($field['noautoload'])) {
+                if (isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
+                    $default_value = $field['default_value'];
+                }
+                update_option($id, $default_value);
             }
         }
     }
@@ -111,12 +115,14 @@ class WPUOptions {
         add_filter("plugin_action_links_" . plugin_basename(__FILE__) , array(&$this,
             'settings_link'
         ));
-        add_action('admin_enqueue_scripts', array(&$this,
-            'add_assets_js'
-        ));
-        add_action('admin_print_styles', array(&$this,
-            'add_assets_css'
-        ));
+        if (isset($_GET['page']) && (strpos($_GET['page'], $this->options['plugin_pageslug'])) === 0) {
+            add_action('admin_enqueue_scripts', array(&$this,
+                'add_assets_js'
+            ));
+            add_action('admin_print_styles', array(&$this,
+                'add_assets_css'
+            ));
+        }
     }
 
     /**
@@ -166,27 +172,23 @@ class WPUOptions {
      * Enqueue JS
      */
     function add_assets_js() {
-        if (isset($_GET['page']) && $_GET['page'] == $this->options['plugin_pageslug']) {
-            wp_enqueue_media();
-            wp_enqueue_script('wpuoptions_scripts', plugins_url('assets/events.js', __FILE__) , array(
-                'jquery-ui-core',
-                'jquery-ui-widget',
-                'jquery-ui-mouse',
-                'jquery-ui-slider',
-                'jquery-ui-datepicker',
-                'iris',
-            ) , $this->options['plugin_version']);
-        }
+        wp_enqueue_media();
+        wp_enqueue_script('wpuoptions_scripts', plugins_url('assets/events.js', __FILE__) , array(
+            'jquery-ui-core',
+            'jquery-ui-widget',
+            'jquery-ui-mouse',
+            'jquery-ui-slider',
+            'jquery-ui-datepicker',
+            'iris',
+        ) , $this->options['plugin_version']);
     }
 
     /**
      * Enqueue CSS
      */
     function add_assets_css() {
-        if (isset($_GET['page']) && $_GET['page'] == $this->options['plugin_pageslug']) {
-            wp_register_style('wpuoptions_style', plugins_url('assets/style.css', __FILE__) , array() , $this->options['plugin_version']);
-            wp_enqueue_style('wpuoptions_style');
-        }
+        wp_register_style('wpuoptions_style', plugins_url('assets/style.css', __FILE__) , array() , $this->options['plugin_version']);
+        wp_enqueue_style('wpuoptions_style');
     }
 
     /**
@@ -254,9 +256,22 @@ class WPUOptions {
         wp_nonce_field('wpu_export_options', 'wpu_export_options_field');
         echo '<p>' . __("Click below to download a .json file containing all your website's options.", 'wpuoptions') . '</p>';
         echo '<h3>Boxes</h3>';
-        foreach ($this->boxes as $box_id => $box) {
-            echo '<p><label><input type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name']) ? __('Default box', 'wpuoptions') : $box['name']) . '</label></p>';
+        $tabs = $this->tabs;
+        ksort($tabs);
+        foreach ($tabs as $tab_id => $tab) {
+            echo '<div class="wpu-export-section">';
+            echo '<h4 class="wpu-export-title"><label>' . $tab['name'] . ' <input type="checkbox" checked="checked" class="wpu-export-title-checkbox" /> </label></h4>';
+            foreach ($this->boxes as $box_id => $box) {
+                if (!isset($box['tab'])) {
+                    $box['tab'] = 'default';
+                }
+                if ($box['tab'] == $tab_id) {
+                    echo '<p><label><input class="wpu-export-boxes-check" type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name']) ? __('Default box', 'wpuoptions') : $box['name']) . '</label></p>';
+                }
+            }
+            echo '</div>';
         }
+
         echo '<p><button name="wpu_export_options" class="button button-primary" type="submit">' . __('Export options', 'wpuoptions') . '</a></p>';
         echo '</form>';
         echo '</div>';

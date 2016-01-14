@@ -1,10 +1,23 @@
 jQuery(document).ready(function($) {
     var form = jQuery('.wpu-options-form');
+    wputh_options_set_exportcheck();
     wputh_options_set_media();
     wputh_options_set_accordion();
     wputh_options_set_editor();
     wputh_options_set_polyfills(form);
 });
+
+/* ----------------------------------------------------------
+  Set export checkboxes
+---------------------------------------------------------- */
+
+var wputh_options_set_exportcheck = function() {
+    jQuery('.wpu-export-section').on('change', '.wpu-export-title-checkbox', function() {
+            var $this = jQuery(this),
+                $parent = $this.closest('.wpu-export-section');
+            $parent.find('.wpu-export-boxes-check').prop("checked", $this.prop('checked'));
+    });
+};
 
 /* ----------------------------------------------------------
   Set polyfills
