@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: WPU Options
-Plugin URI: http://github.com/Darklg/WPUtilities
+Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Version: 4.21
 Description: Friendly interface for website options
 Author: Darklg
