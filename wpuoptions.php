@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.21
+Version: 4.22
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -13,7 +13,13 @@ License URI: http://opensource.org/licenses/MIT
 
 class WPUOptions {
 
-    private $options = array();
+    private $options = array(
+            'plugin_name' => 'WPU Options',
+            'plugin_version' => '4.22',
+            'plugin_userlevel' => 'manage_categories',
+            'plugin_menutype' => 'admin.php',
+            'plugin_pageslug' => 'wpuoptions-settings'
+        );
 
     private $default_box = array(
         'default' => array(
@@ -30,7 +36,7 @@ class WPUOptions {
     /**
      * Init plugin
      */
-    function __construct() {
+    public function __construct() {
         $this->hooks();
         if (is_admin()) {
             $this->set_options();
@@ -38,7 +44,7 @@ class WPUOptions {
         }
     }
 
-    function load_plugin_textdomain() {
+    public function load_plugin_textdomain() {
         load_plugin_textdomain('wpuoptions', false, dirname(plugin_basename(__FILE__)) . '/lang/');
     }
 
@@ -46,15 +52,7 @@ class WPUOptions {
      * Set Options
      */
     private function set_options() {
-        $this->options = array(
-            'plugin_publicname' => __('Site options', 'wpuoptions') ,
-            'plugin_name' => 'WPU Options',
-            'plugin_version' => '4.20',
-            'plugin_userlevel' => 'manage_categories',
-            'plugin_menutype' => 'admin.php',
-            'plugin_pageslug' => 'wpuoptions-settings'
-        );
-
+        $this->options['plugin_publicname'] =  __('Site options', 'wpuoptions');
         $this->main_url = $this->options['plugin_menutype'] . '?page=' . $this->options['plugin_pageslug'];
     }
 
@@ -111,8 +109,8 @@ class WPUOptions {
         ));
         add_action('admin_bar_menu', array(&$this,
             'add_toolbar_menu_items'
-        ) , 100);
-        add_filter("plugin_action_links_" . plugin_basename(__FILE__) , array(&$this,
+        ), 100);
+        add_filter("plugin_action_links_" . plugin_basename(__FILE__), array(&$this,
             'settings_link'
         ));
         if (isset($_GET['page']) && (strpos($_GET['page'], $this->options['plugin_pageslug'])) === 0) {
@@ -128,14 +126,14 @@ class WPUOptions {
     /**
      * Set admin menu
      */
-    function admin_menu() {
+    public function admin_menu() {
         add_menu_page($this->options['plugin_name'] . ' Settings', $this->options['plugin_publicname'], $this->options['plugin_userlevel'], $this->options['plugin_pageslug'], array(&$this,
             'admin_settings'
-        ) , '', 3);
-        add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions') , __('Import', 'wpuoptions') , $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
+        ), '', 3);
+        add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions'), __('Import', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
             'admin_import_page'
         ));
-        add_submenu_page($this->options['plugin_pageslug'], __('Export', 'wpuoptions') , __('Export', 'wpuoptions') , $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-export', array(&$this,
+        add_submenu_page($this->options['plugin_pageslug'], __('Export', 'wpuoptions'), __('Export', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-export', array(&$this,
             'admin_export_page'
         ));
     }
@@ -143,7 +141,7 @@ class WPUOptions {
     /**
      * Settings link
      */
-    function settings_link($links) {
+    public function settings_link($links) {
         $settings_link = '<a href="' . admin_url($this->main_url) . '">' . __('Options', 'wpuoptions') . '</a>';
         array_unshift($links, $settings_link);
         return $links;
@@ -154,57 +152,56 @@ class WPUOptions {
      *
      * @param unknown $admin_bar
      */
-    function add_toolbar_menu_items($admin_bar) {
+    public function add_toolbar_menu_items($admin_bar) {
         if (!current_user_can($this->options['plugin_userlevel'])) {
             return;
         }
         $admin_bar->add_menu(array(
             'id' => 'wpu-options-menubar-link',
             'title' => $this->options['plugin_publicname'],
-            'href' => admin_url($this->main_url) ,
+            'href' => admin_url($this->main_url),
             'meta' => array(
-                'title' => $this->options['plugin_publicname'],
-            ) ,
+                'title' => $this->options['plugin_publicname']
+            )
         ));
     }
 
     /**
      * Enqueue JS
      */
-    function add_assets_js() {
+    public function add_assets_js() {
         wp_enqueue_media();
-        wp_enqueue_script('wpuoptions_scripts', plugins_url('assets/events.js', __FILE__) , array(
+        wp_enqueue_script('wpuoptions_scripts', plugins_url('assets/events.js', __FILE__), array(
             'jquery-ui-core',
             'jquery-ui-widget',
             'jquery-ui-mouse',
             'jquery-ui-slider',
             'jquery-ui-datepicker',
-            'iris',
-        ) , $this->options['plugin_version']);
+            'iris'
+        ), $this->options['plugin_version']);
     }
 
     /**
      * Enqueue CSS
      */
-    function add_assets_css() {
-        wp_register_style('wpuoptions_style', plugins_url('assets/style.css', __FILE__) , array() , $this->options['plugin_version']);
+    public function add_assets_css() {
+        wp_register_style('wpuoptions_style', plugins_url('assets/style.css', __FILE__), array(), $this->options['plugin_version']);
         wp_enqueue_style('wpuoptions_style');
     }
 
     /**
      * Set admin page
      */
-    function admin_settings() {
+    public function admin_settings() {
         $content = '<div class="wrap">';
-        $content.= '<h2>' . $this->options['plugin_publicname'] . '</h2>';
+        $content .= '<h2>' . $this->options['plugin_publicname'] . '</h2>';
         if (!empty($this->fields)) {
-            $content.= $this->admin_update();
-            $content.= $this->admin_form();
+            $content .= $this->admin_update();
+            $content .= $this->admin_form();
+        } else {
+            $content .= '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
         }
-        else {
-            $content.= '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
-        }
-        $content.= '</div>';
+        $content .= '</div>';
         echo $content;
     }
 
@@ -212,7 +209,7 @@ class WPUOptions {
      * Admin submenu export
      */
 
-    function admin_export_page_postAction() {
+    public function admin_export_page_postAction() {
         if (!isset($_POST['wpu_export_options'])) {
             return;
         }
@@ -236,7 +233,7 @@ class WPUOptions {
         $site_url = str_replace(array(
             'http://',
             'https://'
-        ) , '', site_url());
+        ), '', site_url());
         $sanitized_site_url = sanitize_title_with_dashes($site_url);
         $filename = 'export-' . date_i18n('Y-m-d-his') . '-' . $sanitized_site_url . '.json';
 
@@ -249,7 +246,7 @@ class WPUOptions {
         die;
     }
 
-    function admin_export_page() {
+    public function admin_export_page() {
         echo '<div class="wrap">';
         echo '<h2>' . __('Export', 'wpuoptions') . '</h2>';
         echo '<form action="" method="post">';
@@ -280,7 +277,7 @@ class WPUOptions {
     /**
      * Admin submenu import
      */
-    function admin_import_page() {
+    public function admin_import_page() {
         echo '<div class="wrap">';
         echo '<h2>' . __('Import', 'wpuoptions') . '</h2>';
 
@@ -292,8 +289,7 @@ class WPUOptions {
                 $import = $this->import_options($import_tmp);
                 if ($import) {
                     echo '<div class="updated"><p>' . __('The file has been successfully imported.', 'wpuoptions') . '</p></div>';
-                }
-                else {
+                } else {
                     echo '<div class="error"><p>' . __('The file has not been imported.', 'wpuoptions') . '</p></div>';
                 }
             }
@@ -318,9 +314,8 @@ class WPUOptions {
             return;
         }
         if (!wp_verify_nonce($_POST['wpuoptions-noncefield'], 'wpuoptions-nonceaction')) {
-            $content.= '<p>' . __("Error in the form.", 'wpuoptions') . '</p>';
-        }
-        else {
+            $content .= '<p>' . __("Error in the form.", 'wpuoptions') . '</p>';
+        } else {
             $languages = $this->get_languages();
             $updated_options = array();
             $errors = array();
@@ -352,26 +347,25 @@ class WPUOptions {
 
                     // Field is required and have been emptied
                     if ($new_option == '' && isset($field['required'])) {
-                        $errors[] = sprintf(__('The field "%s" must not be empty', 'wpuoptions') , $field_label);
+                        $errors[] = sprintf(__('The field "%s" must not be empty', 'wpuoptions'), $field_label);
                     }
 
                     // If test is ok OR the field is not required
                     elseif ($test_field || ($new_option == '' && !isset($field['required']))) {
                         if ($old_option != $new_option) {
                             update_option($id, $new_option);
-                            $updated_options[] = sprintf(__('The field "%s" has been updated.', 'wpuoptions') , $field_label);
+                            $updated_options[] = sprintf(__('The field "%s" has been updated.', 'wpuoptions'), $field_label);
                         }
-                    }
-                    else {
-                        $errors[] = sprintf(__('The field "%s" has not been updated, because it\'s not valid.', 'wpuoptions') , $field_label);
+                    } else {
+                        $errors[] = sprintf(__('The field "%s" has not been updated, because it\'s not valid.', 'wpuoptions'), $field_label);
                     }
                 }
             }
             if (!empty($updated_options)) {
-                $content.= '<div class="updated"><p><strong>' . __('Success!', 'wpuoptions') . '</strong><br />' . implode('<br />', $updated_options) . '</p></div>';
+                $content .= '<div class="updated"><p><strong>' . __('Success!', 'wpuoptions') . '</strong><br />' . implode('<br />', $updated_options) . '</p></div>';
             }
             if (!empty($errors)) {
-                $content.= '<div class="error"><p><strong>' . __('Fail!', 'wpuoptions') . '</strong><br />' . implode('<br />', $errors) . '</p></div>';
+                $content .= '<div class="error"><p><strong>' . __('Fail!', 'wpuoptions') . '</strong><br />' . implode('<br />', $errors) . '</p></div>';
             }
         }
         return $content;
@@ -389,17 +383,17 @@ class WPUOptions {
         $content = '<form action="" method="post" class="wpu-options-form">';
 
         if (count($this->tabs) > 1) {
-            $content.= '<div id="icon-themes" class="icon32"><br></div>';
-            $content.= '<h2 class="nav-tab-wrapper">';
+            $content .= '<div id="icon-themes" class="icon32"><br></div>';
+            $content .= '<h2 class="nav-tab-wrapper">';
             foreach ($this->tabs as $idtab => $tab) {
                 $current_class = ($current_tab == $idtab ? 'nav-tab-active' : '');
                 $tab_url = '';
                 if ($idtab != 'default') {
                     $tab_url = '&tab=' . $idtab;
                 }
-                $content.= '<a class="nav-tab ' . $current_class . '" href="' . admin_url($this->main_url . $tab_url) . '">' . $tab['name'] . '</a>';
+                $content .= '<a class="nav-tab ' . $current_class . '" href="' . admin_url($this->main_url . $tab_url) . '">' . $tab['name'] . '</a>';
             }
-            $content.= '</h2><br />';
+            $content .= '</h2><br />';
         }
 
         foreach ($this->boxes as $idbox => $box) {
@@ -411,24 +405,24 @@ class WPUOptions {
             $content_tmp = '';
             foreach ($this->fields as $id => $field) {
                 if ((isset($field['box']) && $field['box'] == $idbox) || ($idbox == 'default' && !isset($field['box']))) {
-                    $content_tmp.= $this->admin_field($id, $field);
+                    $content_tmp .= $this->admin_field($id, $field);
                 }
             }
             if (!empty($content_tmp)) {
-                $content.= '<div class="wpu-options-form__box">';
+                $content .= '<div class="wpu-options-form__box">';
 
                 // Adding box name if available
                 if (empty($box['name'])) {
                     $box['name'] = ucfirst($idbox);
                 }
-                $content.= '<h3 id="box-' . $idbox . '" class="wpu-options-form__title">' . $box['name'] . '</h3>';
-                $content.= '<table id="wpu-options-form__table">' . $content_tmp . '</table>';
-                $content.= '</div>';
+                $content .= '<h3 id="box-' . $idbox . '" class="wpu-options-form__title">' . $box['name'] . '</h3>';
+                $content .= '<table class="wpu-options-form__table">' . $content_tmp . '</table>';
+                $content .= '</div>';
             }
         }
-        $content.= '<ul><li><input class="button button-primary" name="plugin_ok" value="' . __('Update', 'wpuoptions') . '" type="submit" /></li></ul>';
-        $content.= wp_nonce_field('wpuoptions-nonceaction', 'wpuoptions-noncefield', 1, 0);
-        $content.= '</form>';
+        $content .= '<ul><li><input class="button button-primary" name="plugin_ok" value="' . __('Update', 'wpuoptions') . '" type="submit" /></li></ul>';
+        $content .= wp_nonce_field('wpuoptions-nonceaction', 'wpuoptions-noncefield', 1, 0);
+        $content .= '</form>';
         return $content;
     }
 
@@ -448,17 +442,16 @@ class WPUOptions {
                 'id' => $id,
                 'field' => $field,
                 'prefix_label' => '',
-                'prefix_opt' => '',
+                'prefix_opt' => ''
             );
-        }
-        else {
+        } else {
             foreach ($languages as $idlang => $lang) {
                 $fields_versions[] = array(
                     'id' => $id,
                     'field' => $field,
                     'prefix_label' => '[' . $idlang . '] ',
                     'prefix_opt' => $idlang . '___',
-                    'lang' => $lang,
+                    'lang' => $lang
                 );
             }
         }
@@ -479,126 +472,127 @@ class WPUOptions {
                 $placeholder = ' placeholder="' . esc_attr($field['placeholder']) . '"';
             }
 
-            $content.= '<tr class="wpu-options-box">';
-            $content.= '<td class="td-label">';
+            $content .= '<tr class="wpu-options-box">';
+            $content .= '<td class="td-label">';
             if (current_user_can('activate_plugins')) {
                 $helper = "get_option('" . $field_version['id'] . "')";
                 if (!empty($field_version['prefix_opt'])) {
                     $helper = "wputh_l18n_get_option('" . $field_version['id'] . "')";
                 }
-                $content.= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
-                $content.= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
+                $content .= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
+                $content .= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
             }
-            $content.= '<label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label>';
-            $content.= '</td>';
-            $content.= '<td>';
+            $content .= '<label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label>';
+            $content .= '</td>';
+            $content .= '<td>';
             switch ($field['type']) {
-                case 'editor':
-                    ob_start();
-                    wp_editor($originalvalue, $idf, array(
-                        'textarea_rows' => 7
-                    ));
-                    $content_editor = ob_get_clean();
-                    if (!empty($originalvalue)) {
-                        $content.= '<div class="wpuoptions-view-editor-switch">';
-                        $content.= '<div class="original-view"><div class="original">' . apply_filters('the_content', $originalvalue) . '</div><a class="edit-link button button-small" href="#" role="button">' . __('Edit this text', 'wpuoptions') . '</a>' . '</div>';
-                        $content.= '<div class="editor-view">' . $content_editor . '<a class="edit-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' . '</div>';
-                        $content.= '</div>';
-                    }
-                    else {
-                        $content.= $content_editor;
-                    }
+            case 'editor':
+                ob_start();
+                wp_editor($originalvalue, $idf, array(
+                    'textarea_rows' => 7
+                ));
+                $content_editor = ob_get_clean();
+                if (!empty($originalvalue)) {
+                    $content .= '<div class="wpuoptions-view-editor-switch">';
+                    $content .= '<div class="original-view"><div class="original">' . apply_filters('the_content', $originalvalue) . '</div><a class="edit-link button button-small" href="#" role="button">' . __('Edit this text', 'wpuoptions') . '</a>' . '</div>';
+                    $content .= '<div class="editor-view">' . $content_editor . '<a class="edit-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' . '</div>';
+                    $content .= '</div>';
+                } else {
+                    $content .= $content_editor;
+                }
                 break;
-                case 'file':
-                case 'media':
-                    $btn_label = __('Add a picture', 'wpuoptions');
-                    $btn_edit_label = __('Change this picture', 'wpuoptions');
-                    $btn_confirm_delete = __('Do you really want to remove this image ?', 'wpuoptions');
-                    if ($field['type'] == 'file') {
-                        $btn_label = __('Add a file', 'wpuoptions');
-                        $btn_edit_label = __('Change this file', 'wpuoptions');
-                        $btn_confirm_delete = __('Do you really want to remove this file ?', 'wpuoptions');
+            case 'file':
+            case 'media':
+                $btn_label = __('Add a picture', 'wpuoptions');
+                $btn_edit_label = __('Change this picture', 'wpuoptions');
+                $btn_confirm_delete = __('Do you really want to remove this image ?', 'wpuoptions');
+                if ($field['type'] == 'file') {
+                    $btn_label = __('Add a file', 'wpuoptions');
+                    $btn_edit_label = __('Change this file', 'wpuoptions');
+                    $btn_confirm_delete = __('Do you really want to remove this file ?', 'wpuoptions');
+                }
+                $btn_label_display = $btn_label;
+                $content_preview = '';
+                if (is_numeric($value)) {
+                    $image = wp_get_attachment_image_src($value, 'big');
+                    if (isset($image[0])) {
+                        $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="' . $image[0] . '?v=' . time() . '" alt="" /></div>';
+                    } else {
+                        $file = wp_get_attachment_url($value);
+                        $file = str_replace($upload_dir['baseurl'], '', $file);
+                        $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><div class="wpu-options-upload-preview--file">' . $file . '</div></div>';
                     }
-                    $btn_label_display = $btn_label;
-                    $content_preview = '';
-                    if (is_numeric($value)) {
-                        $image = wp_get_attachment_image_src($value, 'big');
-                        if (isset($image[0])) {
-                            $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="' . $image[0] . '?v=' . time() . '" alt="" /></div>';
-                        }
-                        else {
-                            $file = wp_get_attachment_url($value);
-                            $file = str_replace($upload_dir['baseurl'], '', $file);
-                            $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><div class="wpu-options-upload-preview--file">' . $file . '</div></div>';
-                        }
-                        $btn_label_display = $btn_edit_label;
-                    }
+                    $btn_label_display = $btn_edit_label;
+                }
 
-                    $content.= '<div data-removethis="' . $upload_dir['baseurl'] . '" data-type="' . $field['type'] . '" data-confirm="' . $btn_confirm_delete . '" data-defaultlabel="' . esc_attr($btn_label) . '" data-label="' . esc_attr($btn_edit_label) . '" id="preview-' . $idf . '">' . $content_preview . '</div>' . '<a href="#" data-for="' . $idf . '" class="button button-small wpuoptions_add_media">' . $btn_label_display . '</a>' . '<input class="hidden-value" type="hidden" ' . $idname . ' value="' . $value . '" />';
+                $content .= '<div data-removethis="' . $upload_dir['baseurl'] . '" data-type="' . $field['type'] . '" data-confirm="' . $btn_confirm_delete . '" data-defaultlabel="' . esc_attr($btn_label) . '" data-label="' . esc_attr($btn_edit_label) . '" id="preview-' . $idf . '">' . $content_preview . '</div>' . '<a href="#" data-for="' . $idf . '" class="button button-small wpuoptions_add_media">' . $btn_label_display . '</a>' . '<input class="hidden-value" type="hidden" ' . $idname . ' value="' . $value . '" />';
                 break;
-                case 'category':
-                    $content.= wp_dropdown_categories(array(
-                        'name' => $idf,
-                        'selected' => $value,
-                        'echo' => 0,
-                        'hide_if_empty' => 1
-                    ));
+            case 'category':
+                $content .= wp_dropdown_categories(array(
+                    'name' => $idf,
+                    'selected' => $value,
+                    'echo' => 0,
+                    'hide_if_empty' => 1
+                ));
                 break;
-                case 'page':
-                    $content.= wp_dropdown_pages(array(
-                        'name' => $idf,
-                        'selected' => $value,
-                        'echo' => 0,
-                    ));
+            case 'page':
+                $content .= wp_dropdown_pages(array(
+                    'name' => $idf,
+                    'selected' => $value,
+                    'echo' => 0
+                ));
                 break;
-                case 'post':
-                    $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
-                    $wpq_post_type = new WP_Query(array(
-                        'posts_per_page' => - 1,
-                        'post_type' => $field_post_type,
-                        'orderby' => 'name',
-                        'order' => 'ASC'
-                    ));
-                    $content.= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf(__('Select a %s', 'wpuoptions') , $field_post_type) . '</option>';
-                    while ($wpq_post_type->have_posts()) {
-                        $wpq_post_type->the_post();
-                        $key = get_the_ID();
-                        $content.= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>';
-                        $content.= get_the_title();
-                        $content.= '</option>';
-                    }
-                    wp_reset_postdata();
-                    $content.= '</select>';
+            case 'post':
+                $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
+                $wpq_post_type = new WP_Query(array(
+                    'posts_per_page' => -1,
+                    'post_type' => $field_post_type,
+                    'orderby' => 'name',
+                    'order' => 'ASC'
+                ));
+                $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf(__('Select a %s', 'wpuoptions'), $field_post_type) . '</option>';
+                while ($wpq_post_type->have_posts()) {
+                    $wpq_post_type->the_post();
+                    $key = get_the_ID();
+                    $content .= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>';
+                    $content .= get_the_title();
+                    $content .= '</option>';
+                }
+                wp_reset_postdata();
+                $content .= '</select>';
                 break;
-                case 'select':
-                    $content.= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . __('Select a value', 'wpuoptions') . '</option>';
-                    foreach ($field['datas'] as $key => $var) {
-                        $content.= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>' . htmlentities($var) . '</option>';
-                    }
-                    $content.= '</select>';
+            case 'select':
+                $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . __('Select a value', 'wpuoptions') . '</option>';
+                foreach ($field['datas'] as $key => $var) {
+                    $content .= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>' . htmlentities($var) . '</option>';
+                }
+                $content .= '</select>';
                 break;
-                case 'radio':
-                    foreach ($field['datas'] as $key => $var) {
-                        $content.= '<label class="label-radio"><input type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . checked($key, $value, 0) . '/> ' . htmlentities($var) . '</label>';
-                    }
+            case 'radio':
+                foreach ($field['datas'] as $key => $var) {
+                    $content .= '<label class="label-radio"><input type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . checked($key, $value, 0) . '/> ' . htmlentities($var) . '</label>';
+                }
                 break;
-                case 'textarea':
-                    $content.= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
+            case 'textarea':
+                $content .= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
                 break;
 
-                    /* Multiple cases */
-                case 'color':
-                case 'date':
-                case 'email':
-                case 'number':
-                case 'url':
-                    $content.= '<input ' . $placeholder . ' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
+            /* Multiple cases */
+            case 'color':
+            case 'date':
+            case 'email':
+            case 'number':
+            case 'url':
+                $content .= '<input ' . $placeholder . ' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
                 break;
-                default:
-                    $content.= '<input ' . $placeholder . ' type="text" ' . $idname . ' value="' . $value . '" />';
+            default:
+                $content .= '<input ' . $placeholder . ' type="text" ' . $idname . ' value="' . $value . '" />';
             }
-            $content.= '</td>';
-            $content.= '</tr>';
+            if (isset($field['help'])) {
+                $content .= '<small class="wpuoptions-help">' . $field['help'] . '</small>';
+            }
+            $content .= '</td>';
+            $content .= '</tr>';
         }
         return $content;
     }
@@ -618,7 +612,7 @@ class WPUOptions {
             'type' => 'text',
             'test' => '',
             'datas' => array(
-                __('No', 'wpuoptions') ,
+                __('No', 'wpuoptions'),
                 __('Yes', 'wpuoptions')
             )
         );
@@ -694,29 +688,29 @@ class WPUOptions {
     private function test_field_value($field, $value) {
         $return = true;
         switch ($field['test']) {
-            case 'email':
-                if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
-                    $return = false;
-                }
+        case 'email':
+            if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+                $return = false;
+            }
             break;
-            case 'category':
-            case 'page':
-                if (!ctype_digit($value)) {
-                    $return = false;
-                }
+        case 'category':
+        case 'page':
+            if (!ctype_digit($value)) {
+                $return = false;
+            }
             break;
-            case 'radio':
-            case 'select':
-                if (!array_key_exists($value, $field['datas'])) {
-                    $return = false;
-                }
+        case 'radio':
+        case 'select':
+            if (!array_key_exists($value, $field['datas'])) {
+                $return = false;
+            }
             break;
-            case 'url':
-                if (filter_var($value, FILTER_VALIDATE_URL) === false) {
-                    $return = false;
-                }
+        case 'url':
+            if (filter_var($value, FILTER_VALIDATE_URL) === false) {
+                $return = false;
+            }
             break;
-            default:
+        default:
         }
         return $return;
     }
@@ -846,8 +840,7 @@ function wpu_options_get_media($option_name, $size = 'thumbnail') {
         $attachment_details['src'] = $image[0];
         $attachment_details['width'] = $image[1];
         $attachment_details['height'] = $image[2];
-    }
-    else {
+    } else {
         $attachment_details = $default_attachment_details;
         $attachment_details['src'] = get_stylesheet_directory_uri() . '/images/options/' . $option_name . '.jpg';
     }

@@ -64,6 +64,50 @@
 }
 
 /* ----------------------------------------------------------
+  Help
+---------------------------------------------------------- */
+
+.wpuoptions-help {
+    display: block;
+    clear: both;
+    border-top: 1px solid transparent;
+    color: #999;
+}
+
+/* ----------------------------------------------------------
+  Fields
+---------------------------------------------------------- */
+
+.wpu-options-box td + td {
+    padding: 0 0 10px;
+}
+
+
+.wpu-options-form__table {
+    width: 100%;
+}
+
+.wpuoptions-view-editor-switch,
+.wpu-options-box textarea,
+.wpu-options-box input[type=url],
+.wpu-options-box input[type=text],
+.wpu-options-box input[type=email],
+.wpu-options-box input[type=date] {
+    width: 100%;
+    margin: 0;
+    max-width: 650px;
+}
+
+@media(max-width:782px) {
+    .wpu-options-form__table,
+    .wpu-options-form__table tbody,
+    .wpu-options-form__table tr,
+    .wpu-options-form__table td {
+        display: block;
+    }
+}
+
+/* ----------------------------------------------------------
   Upload media
 ---------------------------------------------------------- */
 
