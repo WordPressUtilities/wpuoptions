@@ -13,9 +13,9 @@ jQuery(document).ready(function($) {
 
 var wputh_options_set_exportcheck = function() {
     jQuery('.wpu-export-section').on('change', '.wpu-export-title-checkbox', function() {
-            var $this = jQuery(this),
-                $parent = $this.closest('.wpu-export-section');
-            $parent.find('.wpu-export-boxes-check').prop("checked", $this.prop('checked'));
+        var $this = jQuery(this),
+            $parent = $this.closest('.wpu-export-section');
+        $parent.find('.wpu-export-boxes-check').prop("checked", $this.prop('checked'));
     });
 };
 

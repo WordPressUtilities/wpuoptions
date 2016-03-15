@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.22
+Version: 4.22.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -14,12 +14,12 @@ License URI: http://opensource.org/licenses/MIT
 class WPUOptions {
 
     private $options = array(
-            'plugin_name' => 'WPU Options',
-            'plugin_version' => '4.22',
-            'plugin_userlevel' => 'manage_categories',
-            'plugin_menutype' => 'admin.php',
-            'plugin_pageslug' => 'wpuoptions-settings'
-        );
+        'plugin_name' => 'WPU Options',
+        'plugin_version' => '4.22.1',
+        'plugin_userlevel' => 'manage_categories',
+        'plugin_menutype' => 'admin.php',
+        'plugin_pageslug' => 'wpuoptions-settings'
+    );
 
     private $default_box = array(
         'default' => array(
@@ -52,7 +52,7 @@ class WPUOptions {
      * Set Options
      */
     private function set_options() {
-        $this->options['plugin_publicname'] =  __('Site options', 'wpuoptions');
+        $this->options['plugin_publicname'] = __('Site options', 'wpuoptions');
         $this->main_url = $this->options['plugin_menutype'] . '?page=' . $this->options['plugin_pageslug'];
     }
 
@@ -255,6 +255,13 @@ class WPUOptions {
         echo '<h3>Boxes</h3>';
         $tabs = $this->tabs;
         ksort($tabs);
+        $boxes_with_fields = array();
+        foreach ($this->fields as $id => $field) {
+            if (isset($field['box'])) {
+                $boxes_with_fields[$field['box']] = $field['box'];
+            }
+        }
+
         foreach ($tabs as $tab_id => $tab) {
             echo '<div class="wpu-export-section">';
             echo '<h4 class="wpu-export-title"><label>' . $tab['name'] . ' <input type="checkbox" checked="checked" class="wpu-export-title-checkbox" /> </label></h4>';
@@ -262,7 +269,7 @@ class WPUOptions {
                 if (!isset($box['tab'])) {
                     $box['tab'] = 'default';
                 }
-                if ($box['tab'] == $tab_id) {
+                if ($box['tab'] == $tab_id && isset($boxes_with_fields[$box_id])) {
                     echo '<p><label><input class="wpu-export-boxes-check" type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name']) ? __('Default box', 'wpuoptions') : $box['name']) . '</label></p>';
                 }
             }
