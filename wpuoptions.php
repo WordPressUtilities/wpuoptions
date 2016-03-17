@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.22.1
+Version: 4.22.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -11,11 +11,13 @@ License: MIT License
 License URI: http://opensource.org/licenses/MIT
 */
 
+defined('ABSPATH') or die(':(');
+
 class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.22.1',
+        'plugin_version' => '4.22.2',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
