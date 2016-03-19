@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.22.2
+Version: 4.22.3
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.22.2',
+        'plugin_version' => '4.22.3',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -483,7 +483,7 @@ class WPUOptions {
 
             $content .= '<tr class="wpu-options-box">';
             $content .= '<td class="td-label">';
-            if (current_user_can('activate_plugins')) {
+            if (WP_DEBUG && current_user_can('activate_plugins')) {
                 $helper = "get_option('" . $field_version['id'] . "')";
                 if (!empty($field_version['prefix_opt'])) {
                     $helper = "wputh_l18n_get_option('" . $field_version['id'] . "')";
