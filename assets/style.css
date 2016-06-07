@@ -22,7 +22,7 @@
 .wpu-options-box td.td-label {
     z-index: 1;
     position: relative;
-    width: 150px;
+    width: 180px;
     padding-right: 20px;
     font-size: 95%;
     vertical-align: top;
@@ -44,7 +44,7 @@
     left: 25px;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    width: 130px;
+    width: 150px;
     height: 2em;
     padding: 0 0.5em;
     border: 1px solid #ccc;
@@ -82,7 +82,6 @@
     padding: 0 0 10px;
 }
 
-
 .wpu-options-form__table {
     width: 100%;
 }
@@ -104,6 +103,10 @@
     .wpu-options-form__table tr,
     .wpu-options-form__table td {
         display: block;
+    }
+
+    .wpu-options-box td.td-label {
+        width: auto;
     }
 }
 

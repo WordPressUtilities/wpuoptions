@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.22.3
+Version: 4.22.4
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.22.3',
+        'plugin_version' => '4.22.4',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -491,7 +491,7 @@ class WPUOptions {
                 $content .= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
                 $content .= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
             }
-            $content .= '<label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . ' : </label>';
+            $content .= '<label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . '&nbsp;: </label>';
             $content .= '</td>';
             $content .= '<td>';
             switch ($field['type']) {
