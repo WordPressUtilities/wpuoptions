@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.23
+Version: 4.24
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.23',
+        'plugin_version' => '4.24',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -133,12 +133,26 @@ class WPUOptions {
         add_menu_page($this->options['plugin_name'] . ' Settings', $this->options['plugin_publicname'], $this->options['plugin_userlevel'], $this->options['plugin_pageslug'], array(&$this,
             'admin_settings'
         ), '', 3);
+        foreach ($this->tabs as $id => $tab) {
+            if (!isset($tab['sidebar']) || !$tab['sidebar']) {
+                continue;
+            }
+            add_submenu_page($this->options['plugin_pageslug'], $tab['name'], ' - ' . $tab['name'], $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-tab-' . $id, array(&$this,
+                'admin_settings_redirect'
+            ));
+        }
         add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions'), __('Import', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
             'admin_import_page'
         ));
         add_submenu_page($this->options['plugin_pageslug'], __('Export', 'wpuoptions'), __('Export', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-export', array(&$this,
             'admin_export_page'
         ));
+    }
+
+    public function admin_settings_redirect() {
+        $idtab = str_replace($this->options['plugin_pageslug'] . '-tab-', '', $_GET['page']);
+        echo '<script>window.location="' . admin_url($this->main_url . '&tab=' . $idtab) . '";</script>';
+        die;
     }
 
     /**

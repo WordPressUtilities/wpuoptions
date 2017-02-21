@@ -18,7 +18,8 @@ Put the code below in your theme's functions.php file. Add new tabs to your conv
 add_filter( 'wpu_options_tabs', 'set_wpu_options_tabs', 10, 3 );
 function set_wpu_options_tabs( $tabs ) {
     $tabs['special_tab'] = array(
-        'name' => 'Special tab'
+        'name' => 'Special tab',
+        'sidebar' => true // Load in sidebar
     );
     return $tabs;
 }
