@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.24
+Version: 4.24.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.24',
+        'plugin_version' => '4.24.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -137,8 +137,9 @@ class WPUOptions {
             if (!isset($tab['sidebar']) || !$tab['sidebar']) {
                 continue;
             }
-            add_submenu_page($this->options['plugin_pageslug'], $tab['name'], ' - ' . $tab['name'], $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-tab-' . $id, array(&$this,
-                'admin_settings_redirect'
+            $hook = add_submenu_page($this->options['plugin_pageslug'], $tab['name'], ' - ' . $tab['name'], $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-tab-' . $id, '__return_empty_string');
+            add_action("load-{$hook}", array(&$this,
+                'admin_settings_redirect_server'
             ));
         }
         add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions'), __('Import', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
@@ -149,9 +150,9 @@ class WPUOptions {
         ));
     }
 
-    public function admin_settings_redirect() {
+    public function admin_settings_redirect_server() {
         $idtab = str_replace($this->options['plugin_pageslug'] . '-tab-', '', $_GET['page']);
-        echo '<script>window.location="' . admin_url($this->main_url . '&tab=' . $idtab) . '";</script>';
+        wp_redirect(admin_url($this->main_url . '&tab=' . $idtab));
         die;
     }
 
