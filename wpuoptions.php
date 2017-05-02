@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.24.1
+Version: 4.25
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.24.1',
+        'plugin_version' => '4.25',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -491,6 +491,13 @@ class WPUOptions {
                 $originalvalue = $field['default_value'];
                 update_option($field_version['prefix_opt'] . $field_version['id'], $field['default_value']);
             }
+            if (!isset($field['editoroptions']) || !is_array($field['editoroptions'])) {
+                $field['editoroptions'] = array();
+            }
+            if (!isset($field['editoroptions']['textarea_rows'])) {
+                $field['editoroptions']['textarea_rows'] = 7;
+            }
+
             $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
             $placeholder = '';
             if (isset($field['placeholder'])) {
@@ -513,9 +520,7 @@ class WPUOptions {
             switch ($field['type']) {
             case 'editor':
                 ob_start();
-                wp_editor($originalvalue, $idf, array(
-                    'textarea_rows' => 7
-                ));
+                wp_editor($originalvalue, $idf, $field['editoroptions']);
                 $content_editor = ob_get_clean();
                 if (!empty($originalvalue)) {
                     $content .= '<div class="wpuoptions-view-editor-switch">';

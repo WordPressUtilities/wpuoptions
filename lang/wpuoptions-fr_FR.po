@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2017-02-23 11:28+0100\n"
+"POT-Creation-Date: 2017-05-02 22:51+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Darklg <darklg.blog@gmail.com>\n"
 "Language-Team: \n"
@@ -101,51 +101,51 @@ msgstr "Echec !"
 msgid "Update"
 msgstr "Mettre à jour"
 
-#: .././wpuoptions.php:522
+#: .././wpuoptions.php:527
 msgid "Edit this text"
 msgstr "Modifier ce texte"
 
-#: .././wpuoptions.php:523
+#: .././wpuoptions.php:528
 msgid "Cancel edition"
 msgstr "Annuler l'édition"
 
-#: .././wpuoptions.php:531
+#: .././wpuoptions.php:536
 msgid "Add a picture"
 msgstr "Ajouter une image"
 
-#: .././wpuoptions.php:532
+#: .././wpuoptions.php:537
 msgid "Change this picture"
 msgstr "Modifier cette image"
 
-#: .././wpuoptions.php:533
+#: .././wpuoptions.php:538
 msgid "Do you really want to remove this image ?"
 msgstr "Voulez-vous vraiment retirer cette image ?"
 
-#: .././wpuoptions.php:535
+#: .././wpuoptions.php:540
 msgid "Add a file"
 msgstr "Ajouter un fichier"
 
-#: .././wpuoptions.php:536
+#: .././wpuoptions.php:541
 msgid "Change this file"
 msgstr "Modifier ce fichier"
 
-#: .././wpuoptions.php:537
+#: .././wpuoptions.php:542
 msgid "Do you really want to remove this file ?"
 msgstr "Voulez-vous vraiment retirer ce fichier ?"
 
-#: .././wpuoptions.php:579
+#: .././wpuoptions.php:584
 #, php-format
 msgid "Select a %s"
 msgstr "Sélectionner un %s"
 
-#: .././wpuoptions.php:591
+#: .././wpuoptions.php:596
 msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
-#: .././wpuoptions.php:641
+#: .././wpuoptions.php:646
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:642
+#: .././wpuoptions.php:647
 msgid "Yes"
 msgstr "Oui"
