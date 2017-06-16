@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.25.1
+Version: 4.26.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.25.1',
+        'plugin_version' => '4.26.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -557,14 +557,19 @@ class WPUOptions {
 
                 $content .= '<div data-removethis="' . $upload_dir['baseurl'] . '" data-type="' . $field['type'] . '" data-confirm="' . $btn_confirm_delete . '" data-defaultlabel="' . esc_attr($btn_label) . '" data-label="' . esc_attr($btn_edit_label) . '" id="preview-' . $idf . '">' . $content_preview . '</div>' . '<a href="#" data-for="' . $idf . '" class="button button-small wpuoptions_add_media">' . $btn_label_display . '</a>' . '<input class="hidden-value" type="hidden" ' . $idname . ' value="' . $value . '" />';
                 break;
+            case 'taxonomy':
             case 'category':
-                $content .= wp_dropdown_categories(array(
+                $dropdown_options = array(
                     'name' => $idf,
                     'selected' => $value,
                     'echo' => 0,
                     'hide_empty' => false,
                     'hide_if_empty' => false
-                ));
+                );
+                if (isset($field['taxonomy'])) {
+                    $dropdown_options['taxonomy'] = $field['taxonomy'];
+                }
+                $content .= wp_dropdown_categories($dropdown_options);
                 break;
             case 'page':
                 $content .= wp_dropdown_pages(array(

@@ -66,7 +66,8 @@ Fields types :
 * "media" : An attached file present in the Media editor.
 * "page" : A WordPress page.
 * "category" : A WordPress category.
-* "post" : A WordPress post. (default : post. Use the type in "post_type" value if available.)
+* "taxonomy" : A WordPress taxonomy. (default : category. Use the argument "taxonomy" value to specify.)
+* "post" : A WordPress post. (default : post. Use the argument "post_type" value to specify.)
 * "select" : A value inside an array present into "datas" (default : yes/no)
 * "radio" : A value inside an array present into "datas" (default : yes/no)
 * "textarea" : A classic textarea
