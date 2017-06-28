@@ -100,6 +100,21 @@ var wputh_options_set_media = function() {
             multiple: false // Set to true to allow multiple files to be selected
         });
 
+
+        wpuopt_file_frame.on('open', function() {
+            var $targetInput = jQuery('#' + wpuopt_datafor);
+            if(!$targetInput){
+                return false;
+            }
+
+            if (!$targetInput.attr('value')) {
+                return;
+            }
+            var attachment = wp.media.attachment($targetInput.attr('value'));
+            attachment.fetch();
+            wpuopt_file_frame.state().get('selection').add(attachment ? [attachment] : []);
+        });
+
         // When an image is selected, run a callback.
         wpuopt_file_frame.on('select', function() {
             // We set multiple to false so only get one image from the uploader

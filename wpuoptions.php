@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.26.0
+Version: 4.27.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.26.0',
+        'plugin_version' => '4.27.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -580,12 +580,21 @@ class WPUOptions {
                 break;
             case 'post':
                 $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
-                $wpq_post_type = get_posts(array(
+
+                $req = array(
                     'posts_per_page' => -1,
                     'post_type' => $field_post_type,
                     'orderby' => 'name',
                     'order' => 'ASC'
-                ));
+                );
+
+                $cache_id = 'wpuoptions_postcache_' . md5(serialize($req));
+                $wpq_post_type = wp_cache_get($cache_id);
+                if (!is_array($wpq_post_type)) {
+                    $wpq_post_type = get_posts($req);
+                    wp_cache_set($cache_id, $wpq_post_type, '', 30);
+                }
+
                 $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf(__('Select a %s', 'wpuoptions'), $field_post_type) . '</option>';
                 foreach ($wpq_post_type as $wpq_post) {
                     $key = $wpq_post->ID;
