@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.27.0
+Version: 4.28.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.27.0',
+        'plugin_version' => '4.28.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -117,6 +117,9 @@ class WPUOptions {
             'settings_link'
         ));
         if (isset($_GET['page']) && (strpos($_GET['page'], $this->options['plugin_pageslug'])) === 0) {
+            add_filter('teeny_mce_buttons', array(&$this,
+                'custom_editor_buttons'
+            ), 10, 2);
             add_action('admin_enqueue_scripts', array(&$this,
                 'add_assets_js'
             ));
@@ -497,6 +500,11 @@ class WPUOptions {
             if (!isset($field['editoroptions']['textarea_rows'])) {
                 $field['editoroptions']['textarea_rows'] = 7;
             }
+            if (isset($field['editorbuttons'])) {
+                $field['editoroptions']['quicktags'] = false;
+                $field['editoroptions']['teeny'] = true;
+                $field['editoroptions']['tinymce'] = true;
+            }
 
             $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
             $placeholder = '';
@@ -766,6 +774,26 @@ class WPUOptions {
      */
     private function get_field_id($id) {
         return 'wpu_admin_id_' . $id;
+    }
+
+    /**
+     * Add custom buttons to editor
+     * @param  array    $buttons     List of TinyMCE Buttons to keep
+     * @param  string   $editor_id   Targeted editor ID
+     * @return array                 Final list of buttons
+     */
+    public function custom_editor_buttons($buttons, $editor_id) {
+        foreach ($this->fields as $id => $field) {
+            if (!isset($field['type'], $field['editorbuttons']) || $field['type'] != 'editor' || empty($field['editorbuttons']) || !is_array($field['editorbuttons'])) {
+                continue;
+            }
+            $field_id = $this->get_field_id($id);
+            if ($field_id != $editor_id) {
+                continue;
+            }
+            return $field['editorbuttons'];
+        }
+        return $buttons;
     }
 
     /**
