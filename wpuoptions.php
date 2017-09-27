@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.28.0
+Version: 4.28.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.28.0',
+        'plugin_version' => '4.28.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -506,7 +506,11 @@ class WPUOptions {
                 $field['editoroptions']['tinymce'] = true;
             }
 
-            $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
+            $value = '';
+            if (!is_object($originalvalue)) {
+                $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
+            }
+
             $placeholder = '';
             if (isset($field['placeholder'])) {
                 $placeholder = ' placeholder="' . esc_attr($field['placeholder']) . '"';
@@ -744,6 +748,7 @@ class WPUOptions {
                 $return = false;
             }
             break;
+        case 'taxonomy':
         case 'category':
         case 'page':
             if (!ctype_digit($value)) {
