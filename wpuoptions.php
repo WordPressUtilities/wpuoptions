@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.28.1
+Version: 4.28.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.28.1',
+        'plugin_version' => '4.28.2',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -485,6 +485,7 @@ class WPUOptions {
         }
         $content = '';
         $upload_dir = wp_upload_dir();
+        $wpu_posttypes = apply_filters('wputh_get_posttypes', array());
         foreach ($fields_versions as $field_version) {
             $idf = $this->get_field_id($field_version['prefix_opt'] . $field_version['id']);
             $field = $this->get_field_datas($field_version['id'], $field_version['field']);
@@ -607,11 +608,16 @@ class WPUOptions {
                     wp_cache_set($cache_id, $wpq_post_type, '', 30);
                 }
 
-                $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf(__('Select a %s', 'wpuoptions'), $field_post_type) . '</option>';
+                $select_string = _x('Select a %s', 'male', 'wpuoptions');
+                if (is_array($wpu_posttypes) && isset($wpu_posttypes[$field_post_type], $wpu_posttypes[$field_post_type]['female']) && $wpu_posttypes[$field_post_type]['female']) {
+                    $select_string = _x('Select a %s', 'female', 'wpuoptions');
+                }
+
+                $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf($select_string, $field_post_type) . '</option>';
                 foreach ($wpq_post_type as $wpq_post) {
                     $key = $wpq_post->ID;
                     $content .= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>';
-                    $content .= $wpq_post->post_title . ' - #' . $key;
+                    $content .= get_the_title($wpq_post) . ' - #' . $key;
                     $content .= '</option>';
                 }
                 $content .= '</select>';

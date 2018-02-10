@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2017-09-27 16:26+0200\n"
+"POT-Creation-Date: 2018-02-10 21:32+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Darklg <darklg.blog@gmail.com>\n"
 "Language-Team: \n"
@@ -12,7 +12,7 @@ msgstr ""
 "X-Generator: Poedit 1.8.11\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
-"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_n:1,2;esc_attr__\n"
 "X-Poedit-SearchPath-0: ../.\n"
 
 #: .././wpuoptions.php:58
@@ -101,51 +101,61 @@ msgstr "Echec !"
 msgid "Update"
 msgstr "Mettre à jour"
 
-#: .././wpuoptions.php:539
+#: .././wpuoptions.php:540
 msgid "Edit this text"
 msgstr "Modifier ce texte"
 
-#: .././wpuoptions.php:540
+#: .././wpuoptions.php:541
 msgid "Cancel edition"
 msgstr "Annuler l'édition"
 
-#: .././wpuoptions.php:548
+#: .././wpuoptions.php:549
 msgid "Add a picture"
 msgstr "Ajouter une image"
 
-#: .././wpuoptions.php:549
+#: .././wpuoptions.php:550
 msgid "Change this picture"
 msgstr "Modifier cette image"
 
-#: .././wpuoptions.php:550
+#: .././wpuoptions.php:551
 msgid "Do you really want to remove this image ?"
 msgstr "Voulez-vous vraiment retirer cette image ?"
 
-#: .././wpuoptions.php:552
+#: .././wpuoptions.php:553
 msgid "Add a file"
 msgstr "Ajouter un fichier"
 
-#: .././wpuoptions.php:553
+#: .././wpuoptions.php:554
 msgid "Change this file"
 msgstr "Modifier ce fichier"
 
-#: .././wpuoptions.php:554
+#: .././wpuoptions.php:555
 msgid "Do you really want to remove this file ?"
 msgstr "Voulez-vous vraiment retirer ce fichier ?"
 
-#: .././wpuoptions.php:610
+#: .././wpuoptions.php:611
 #, php-format
+msgctxt "male"
 msgid "Select a %s"
 msgstr "Sélectionner un %s"
 
-#: .././wpuoptions.php:620
+#: .././wpuoptions.php:613
+#, php-format
+msgctxt "female"
+msgid "Select a %s"
+msgstr "Sélectionner une %s"
+
+#: .././wpuoptions.php:626
 msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
-#: .././wpuoptions.php:670
+#: .././wpuoptions.php:676
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:671
+#: .././wpuoptions.php:677
 msgid "Yes"
 msgstr "Oui"
+
+#~ msgid "Select a %s"
+#~ msgstr "Sélectionner un %s"
