@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.28.2
+Version: 4.28.3
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.28.2',
+        'plugin_version' => '4.28.3',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -45,6 +45,13 @@ class WPUOptions {
         $this->hooks();
         $this->set_options();
         $this->admin_hooks();
+
+        include dirname(__FILE__) . '/inc/WPUBaseUpdate/WPUBaseUpdate.php';
+        $this->settings_update = new \wpuoptions\WPUBaseUpdate(
+            'WordPressUtilities',
+            'wpuoptions',
+            $this->options['plugin_version']);
+
     }
 
     public function load_plugin_textdomain() {
@@ -79,6 +86,7 @@ class WPUOptions {
      * Set fields values
      */
     public function set_fields() {
+        $this->options = apply_filters('wpu_options_options', $this->options);
         $this->fields = apply_filters('wpu_options_fields', array());
         $this->boxes = apply_filters('wpu_options_boxes', $this->default_box);
         $this->tabs = apply_filters('wpu_options_tabs', $this->default_tab);
@@ -145,10 +153,10 @@ class WPUOptions {
                 'admin_settings_redirect_server'
             ));
         }
-        add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions'), __('Import', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-import', array(&$this,
+        add_submenu_page($this->options['plugin_pageslug'], __('Import', 'wpuoptions'), __('Import', 'wpuoptions'), apply_filters('wpu_options_level__admin_import_page', $this->options['plugin_userlevel']), $this->options['plugin_pageslug'] . '-import', array(&$this,
             'admin_import_page'
         ));
-        add_submenu_page($this->options['plugin_pageslug'], __('Export', 'wpuoptions'), __('Export', 'wpuoptions'), $this->options['plugin_userlevel'], $this->options['plugin_pageslug'] . '-export', array(&$this,
+        add_submenu_page($this->options['plugin_pageslug'], __('Export', 'wpuoptions'), __('Export', 'wpuoptions'), apply_filters('wpu_options_level__admin_export_page', $this->options['plugin_userlevel']), $this->options['plugin_pageslug'] . '-export', array(&$this,
             'admin_export_page'
         ));
     }
