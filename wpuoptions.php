@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.28.3
+Version: 4.29.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.28.3',
+        'plugin_version' => '4.29.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -369,10 +369,19 @@ class WPUOptions {
 
             foreach ($testfields as $id => $field) {
                 $idf = $this->get_field_id($id);
-                if (isset($_POST[$idf])) {
+                $is_checkbox = (isset($field['type']) && $field['type'] == 'checkbox');
+                if (isset($_POST[$idf]) || $is_checkbox) {
                     $field = $this->get_field_datas($id, $field);
                     $old_option = get_option($id);
-                    $new_option = trim(stripslashes($_POST[$idf]));
+                    if ($is_checkbox) {
+                        /* Check if control field exists before checking value */
+                        $new_option = $old_option;
+                        if (isset($_POST[$idf . '__check'])) {
+                            $new_option = (isset($_POST[$idf]) ? '1' : '0');
+                        }
+                    } else {
+                        $new_option = trim(stripslashes($_POST[$idf]));
+                    }
 
                     $test_field = $this->test_field_value($field, $new_option);
 
@@ -645,6 +654,10 @@ class WPUOptions {
             case 'textarea':
                 $content .= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
                 break;
+            case 'checkbox':
+                $content .= '<input type="hidden" name="' . $idf . '__check" value="1" />';
+                $content .= '<label><input type="checkbox" ' . $idname . ' value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /> '.$field['label_check'].'</label>';
+                break;
 
             /* Multiple cases */
             case 'color':
@@ -678,6 +691,7 @@ class WPUOptions {
         $default_values = array(
             'box' => 'default',
             'label' => $id,
+            'label_check' => '',
             'type' => 'text',
             'test' => '',
             'datas' => array(

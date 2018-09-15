@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2018-09-08 19:00+0200\n"
+"POT-Creation-Date: 2018-09-15 16:56+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Darklg <darklg.blog@gmail.com>\n"
 "Language-Team: \n"
@@ -74,86 +74,86 @@ msgstr "Importer le fichier d'options"
 msgid "Error in the form."
 msgstr "Erreur dans le formulaire."
 
-#: .././wpuoptions.php:386
+#: .././wpuoptions.php:395
 #, php-format
 msgid "The field \"%s\" must not be empty"
 msgstr "Le champ \"%s\" ne doit pas être vide."
 
-#: .././wpuoptions.php:393
+#: .././wpuoptions.php:402
 #, php-format
 msgid "The field \"%s\" has been updated."
 msgstr "Le champ \"%s\" a été mis à jour."
 
-#: .././wpuoptions.php:396
+#: .././wpuoptions.php:405
 #, php-format
 msgid "The field \"%s\" has not been updated, because it's not valid."
 msgstr "Le champ \"%s\" n’a pas été mis à jour, car il est invalide."
 
-#: .././wpuoptions.php:401
+#: .././wpuoptions.php:410
 msgid "Success!"
 msgstr "Succès !"
 
-#: .././wpuoptions.php:404
+#: .././wpuoptions.php:413
 msgid "Fail!"
 msgstr "Echec !"
 
-#: .././wpuoptions.php:459
+#: .././wpuoptions.php:468
 msgid "Update"
 msgstr "Mettre à jour"
 
-#: .././wpuoptions.php:548
+#: .././wpuoptions.php:557
 msgid "Edit this text"
 msgstr "Modifier ce texte"
 
-#: .././wpuoptions.php:549
+#: .././wpuoptions.php:558
 msgid "Cancel edition"
 msgstr "Annuler l'édition"
 
-#: .././wpuoptions.php:557
+#: .././wpuoptions.php:566
 msgid "Add a picture"
 msgstr "Ajouter une image"
 
-#: .././wpuoptions.php:558
+#: .././wpuoptions.php:567
 msgid "Change this picture"
 msgstr "Modifier cette image"
 
-#: .././wpuoptions.php:559
+#: .././wpuoptions.php:568
 msgid "Do you really want to remove this image ?"
 msgstr "Voulez-vous vraiment retirer cette image ?"
 
-#: .././wpuoptions.php:561
+#: .././wpuoptions.php:570
 msgid "Add a file"
 msgstr "Ajouter un fichier"
 
-#: .././wpuoptions.php:562
+#: .././wpuoptions.php:571
 msgid "Change this file"
 msgstr "Modifier ce fichier"
 
-#: .././wpuoptions.php:563
+#: .././wpuoptions.php:572
 msgid "Do you really want to remove this file ?"
 msgstr "Voulez-vous vraiment retirer ce fichier ?"
 
-#: .././wpuoptions.php:619
+#: .././wpuoptions.php:628
 #, php-format
 msgctxt "male"
 msgid "Select a %s"
 msgstr "Sélectionner un %s"
 
-#: .././wpuoptions.php:621
+#: .././wpuoptions.php:630
 #, php-format
 msgctxt "female"
 msgid "Select a %s"
 msgstr "Sélectionner une %s"
 
-#: .././wpuoptions.php:634
+#: .././wpuoptions.php:643
 msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
-#: .././wpuoptions.php:684
+#: .././wpuoptions.php:698
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:685
+#: .././wpuoptions.php:699
 msgid "Yes"
 msgstr "Oui"
 
