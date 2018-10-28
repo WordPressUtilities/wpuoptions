@@ -454,3 +454,22 @@
     visibility: visible;
     opacity: 0.999;
 }
+
+/* ----------------------------------------------------------
+  Lang
+---------------------------------------------------------- */
+
+.wpu-options-lang-switcher li {
+    display: inline-block;
+    margin-right: 0.5em;
+    vertical-align: top;
+}
+
+.wpu-options-lang-switcher a:not(:hover) {
+    text-decoration: none;
+}
+
+.wpu-options-lang-switcher a.is-active {
+    text-decoration: underline;
+    font-weight: bold;
+}

@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.29.0
+Version: 4.30.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.29.0',
+        'plugin_version' => '4.30.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -441,6 +441,15 @@ class WPUOptions {
             $content .= '</h2><br />';
         }
 
+        $languages = $this->get_languages();
+        if (!empty($languages)) {
+            $content .= '<ul class="wpu-options-lang-switcher">';
+            foreach ($languages as $id => $lang) {
+                $content .= '<li><a href="#" data-lang="' . esc_attr($id) . '">' . $lang . '</a></li>';
+            }
+            $content .= '</ul>';
+        }
+
         foreach ($this->boxes as $idbox => $box) {
             $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
             $box_usercan = isset($box['current_user_can']) ? current_user_can($box['current_user_can']) : true;
@@ -465,6 +474,7 @@ class WPUOptions {
                 $content .= '</div>';
             }
         }
+
         $content .= '<ul><li><input class="button button-primary" name="plugin_ok" value="' . __('Update', 'wpuoptions') . '" type="submit" /></li></ul>';
         $content .= wp_nonce_field('wpuoptions-nonceaction', 'wpuoptions-noncefield', 1, 0);
         $content .= '</form>';
@@ -496,6 +506,7 @@ class WPUOptions {
                     'field' => $field,
                     'prefix_label' => '[' . $idlang . '] ',
                     'prefix_opt' => $idlang . '___',
+                    'idlang' => $idlang,
                     'lang' => $lang
                 );
             }
@@ -534,7 +545,12 @@ class WPUOptions {
                 $placeholder = ' placeholder="' . esc_attr($field['placeholder']) . '"';
             }
 
-            $content .= '<tr class="wpu-options-box">';
+            $lang_attr = '';
+            if (isset($field_version['idlang'])) {
+                $lang_attr = 'data-lang="' . $field_version['idlang'] . '"';
+            }
+
+            $content .= '<tr class="wpu-options-box" ' . $lang_attr . '>';
             $content .= '<td class="td-label">';
             if (WP_DEBUG && current_user_can('activate_plugins')) {
                 $helper = "get_option('" . $field_version['id'] . "')";
@@ -656,7 +672,7 @@ class WPUOptions {
                 break;
             case 'checkbox':
                 $content .= '<input type="hidden" name="' . $idf . '__check" value="1" />';
-                $content .= '<label><input type="checkbox" ' . $idname . ' value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /> '.$field['label_check'].'</label>';
+                $content .= '<label><input type="checkbox" ' . $idname . ' value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /> ' . $field['label_check'] . '</label>';
                 break;
 
             /* Multiple cases */

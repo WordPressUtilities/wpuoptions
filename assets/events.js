@@ -3,6 +3,7 @@ jQuery(document).ready(function($) {
     wputh_options_set_exportcheck();
     wputh_options_set_media();
     wputh_options_set_accordion();
+    wputh_options_set_langs();
     wputh_options_set_editor();
     wputh_options_set_polyfills(form);
 });
@@ -33,7 +34,7 @@ var wputh_options_set_polyfills = function(form) {
     form.find('input[type=color]').each(function() {
         jQuery(this).attr('type', 'text').iris();
     });
-}
+};
 
 /* ----------------------------------------------------------
   Set Editor
@@ -100,10 +101,9 @@ var wputh_options_set_media = function() {
             multiple: false // Set to true to allow multiple files to be selected
         });
 
-
         wpuopt_file_frame.on('open', function() {
             var $targetInput = jQuery('#' + wpuopt_datafor);
-            if(!$targetInput){
+            if (!$targetInput) {
                 return false;
             }
 
@@ -175,4 +175,26 @@ var wputh_options_set_accordion = function() {
         boxes.eq(0).removeClass('is-closed');
     }
 
+};
+
+/* ----------------------------------------------------------
+  Langs
+---------------------------------------------------------- */
+
+var wputh_options_set_langs = function() {
+    var $form = jQuery('.wpu-options-form'),
+        $boxes = $form.find('.wpu-options-box[data-lang]'),
+        $langs = jQuery('.wpu-options-lang-switcher').find('a[data-lang]');
+
+    $langs.on('click', function(e) {
+        var $this = jQuery(this),
+            $lang = $this.attr('data-lang');
+        e.preventDefault();
+        $boxes.hide();
+        $langs.removeClass('is-active');
+        $this.addClass('is-active');
+        $boxes.filter('[data-lang="' + $lang + '"]').show();
+    });
+
+    $langs.eq(0).trigger('click');
 };
