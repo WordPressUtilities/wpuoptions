@@ -459,6 +459,13 @@
   Lang
 ---------------------------------------------------------- */
 
+.wpu-options-form .wpu-options-lang-switcher {
+    display: none;
+}
+.wpu-options-form.has-lang .wpu-options-lang-switcher {
+    display: block;
+}
+
 .wpu-options-lang-switcher li {
     display: inline-block;
     margin-right: 0.5em;

@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.30.0
+Version: 4.30.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.30.0',
+        'plugin_version' => '4.30.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -425,7 +425,8 @@ class WPUOptions {
 
         $current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : 'default';
 
-        $content = '<form action="" method="post" class="wpu-options-form">';
+        $content = '';
+        $has_lang = false;
 
         if (count($this->tabs) > 1) {
             $content .= '<div id="icon-themes" class="icon32"><br></div>';
@@ -460,6 +461,9 @@ class WPUOptions {
             foreach ($this->fields as $id => $field) {
                 if ((isset($field['box']) && $field['box'] == $idbox) || ($idbox == 'default' && !isset($field['box']))) {
                     $content_tmp .= $this->admin_field($id, $field);
+                    if (isset($field['lang']) && $field['lang']) {
+                        $has_lang = true;
+                    }
                 }
             }
             if (!empty($content_tmp)) {
@@ -477,7 +481,7 @@ class WPUOptions {
 
         $content .= '<ul><li><input class="button button-primary" name="plugin_ok" value="' . __('Update', 'wpuoptions') . '" type="submit" /></li></ul>';
         $content .= wp_nonce_field('wpuoptions-nonceaction', 'wpuoptions-noncefield', 1, 0);
-        $content .= '</form>';
+        $content = '<form action="" method="post" class="wpu-options-form ' . ($has_lang ? 'has-lang' : '') . '">' . $content . '</form>';
         return $content;
     }
 
