@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.30.1
+Version: 4.31.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.30.1',
+        'plugin_version' => '4.31.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -500,7 +500,6 @@ class WPUOptions {
             $fields_versions[] = array(
                 'id' => $id,
                 'field' => $field,
-                'prefix_label' => '',
                 'prefix_opt' => ''
             );
         } else {
@@ -508,7 +507,6 @@ class WPUOptions {
                 $fields_versions[] = array(
                     'id' => $id,
                     'field' => $field,
-                    'prefix_label' => '[' . $idlang . '] ',
                     'prefix_opt' => $idlang . '___',
                     'idlang' => $idlang,
                     'lang' => $lang
@@ -564,9 +562,10 @@ class WPUOptions {
                 $content .= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
                 $content .= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
             }
-            $content .= '<label for="' . $idf . '">' . $field_version['prefix_label'] . $field['label'] . '&nbsp;: </label>';
+            $content .= '<label for="' . $idf . '">' . $field['label'] . '&nbsp;: </label>';
             $content .= '</td>';
             $content .= '<td>';
+            $content .= '<div class="'.($lang_attr != '' ? 'wpufield-has-lang' : '').'">';
             switch ($field['type']) {
             case 'editor':
                 ob_start();
@@ -693,6 +692,7 @@ class WPUOptions {
             if (isset($field['help'])) {
                 $content .= '<small class="wpuoptions-help">' . $field['help'] . '</small>';
             }
+            $content .= '</div>';
             $content .= '</td>';
             $content .= '</tr>';
         }
@@ -901,11 +901,14 @@ function wputh_l18n_get_option($name, $lang = false) {
         if (isset($q_config['language'])) {
             $lang = $q_config['language'];
         }
+        if(function_exists('pll_current_language')){
+            $lang = pll_current_language();
+        }
     }
 
     /* Get meta value */
 
-    if (isset($q_config['language'])) {
+    if ($lang !== false) {
         $option_l18n = get_option($lang . '___' . $name);
         if (!empty($option_l18n)) {
             $option = $option_l18n;
@@ -916,6 +919,9 @@ function wputh_l18n_get_option($name, $lang = false) {
     $default_language = '';
     if (isset($q_config['language'])) {
         $default_language = $q_config['enabled_languages'][0];
+    }
+    if(function_exists('pll_default_language')){
+        $default_language = pll_default_language();
     }
     $default_language = apply_filters('wputh_l18n_get_option__defaultlang', $default_language);
 

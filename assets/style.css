@@ -462,6 +462,7 @@
 .wpu-options-form .wpu-options-lang-switcher {
     display: none;
 }
+
 .wpu-options-form.has-lang .wpu-options-lang-switcher {
     display: block;
 }
@@ -479,4 +480,25 @@
 .wpu-options-lang-switcher a.is-active {
     text-decoration: underline;
     font-weight: bold;
+}
+
+/* Lang field
+-------------------------- */
+
+.wpufield-has-lang {
+    z-index: 1;
+    position: relative;
+    padding-left: 2px;
+}
+
+.wpufield-has-lang:before {
+    content: '';
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 3px;
+    margin: auto;
+    background-color: #369;
 }
