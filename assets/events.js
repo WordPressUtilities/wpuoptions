@@ -5,6 +5,7 @@ jQuery(document).ready(function($) {
     wputh_options_set_accordion();
     wputh_options_set_langs();
     wputh_options_set_editor();
+    wputh_options_set_multiple_selects();
     wputh_options_set_polyfills(form);
 });
 
@@ -18,6 +19,17 @@ var wputh_options_set_exportcheck = function() {
             $parent = $this.closest('.wpu-export-section');
         $parent.find('.wpu-export-boxes-check').prop("checked", $this.prop('checked'));
     });
+};
+
+/* ----------------------------------------------------------
+  Set multiple selects
+---------------------------------------------------------- */
+
+var wputh_options_set_multiple_selects = function() {
+    if(!jQuery.fn.select2){
+        return;
+    }
+    $('.wpu-options-box select[multiple]').select2();
 };
 
 /* ----------------------------------------------------------

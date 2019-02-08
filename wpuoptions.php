@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.31.0
+Version: 4.32.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.31.0',
+        'plugin_version' => '4.32.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -208,6 +208,19 @@ class WPUOptions {
             'jquery-ui-datepicker',
             'iris'
         ), $this->options['plugin_version']);
+
+        $has_multiple = false;
+        foreach ($this->fields as $field) {
+            if (isset($field['multiple']) && $field['multiple']) {
+                $has_multiple = true;
+            }
+        }
+        if ($has_multiple) {
+            wp_register_style('select2css', 'https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.3/select2.css', false, '3.5.3', 'all');
+            wp_register_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.3/select2.js', array('jquery'), '3.5.3', true);
+            wp_enqueue_style('select2css');
+            wp_enqueue_script('select2');
+        }
     }
 
     /**
@@ -370,6 +383,7 @@ class WPUOptions {
             foreach ($testfields as $id => $field) {
                 $idf = $this->get_field_id($id);
                 $is_checkbox = (isset($field['type']) && $field['type'] == 'checkbox');
+                $is_multiple = isset($field['multiple']) && $field['multiple'];
                 if (isset($_POST[$idf]) || $is_checkbox) {
                     $field = $this->get_field_datas($id, $field);
                     $old_option = get_option($id);
@@ -380,7 +394,11 @@ class WPUOptions {
                             $new_option = (isset($_POST[$idf]) ? '1' : '0');
                         }
                     } else {
-                        $new_option = trim(stripslashes($_POST[$idf]));
+                        if ($is_multiple && wpuoptions_is_array_of_numbers($_POST[$idf])) {
+                            $new_option = $_POST[$idf];
+                        } else {
+                            $new_option = trim(stripslashes($_POST[$idf]));
+                        }
                     }
 
                     $test_field = $this->test_field_value($field, $new_option);
@@ -519,8 +537,10 @@ class WPUOptions {
         foreach ($fields_versions as $field_version) {
             $idf = $this->get_field_id($field_version['prefix_opt'] . $field_version['id']);
             $field = $this->get_field_datas($field_version['id'], $field_version['field']);
-            $idname = ' id="' . $idf . '" name="' . $idf . '" ';
+            $is_multiple = isset($field['multiple']) && $field['multiple'];
+            $idname = ' id="' . $idf . '" name="' . $idf . ($is_multiple ? '[]' : '') . '" ';
             $originalvalue = get_option($field_version['prefix_opt'] . $field_version['id']);
+            $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
             if ($originalvalue === false && isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
                 $originalvalue = $field['default_value'];
                 update_option($field_version['prefix_opt'] . $field_version['id'], $field['default_value']);
@@ -538,8 +558,11 @@ class WPUOptions {
             }
 
             $value = '';
-            if (!is_object($originalvalue)) {
+            if (!is_object($originalvalue) && !is_array($originalvalue)) {
                 $value = htmlspecialchars($originalvalue, ENT_QUOTES, "UTF-8");
+            }
+            if (is_array($originalvalue) && wpuoptions_is_array_of_numbers($originalvalue)) {
+                $value = $originalvalue;
             }
 
             $placeholder = '';
@@ -565,7 +588,7 @@ class WPUOptions {
             $content .= '<label for="' . $idf . '">' . $field['label'] . '&nbsp;: </label>';
             $content .= '</td>';
             $content .= '<td>';
-            $content .= '<div class="'.($lang_attr != '' ? 'wpufield-has-lang' : '').'">';
+            $content .= '<div class="' . ($lang_attr != '' ? 'wpufield-has-lang' : '') . '">';
             switch ($field['type']) {
             case 'editor':
                 ob_start();
@@ -628,7 +651,6 @@ class WPUOptions {
                 ));
                 break;
             case 'post':
-                $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
 
                 $req = array(
                     'posts_per_page' => -1,
@@ -649,10 +671,17 @@ class WPUOptions {
                     $select_string = _x('Select a %s', 'female', 'wpuoptions');
                 }
 
-                $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf($select_string, $field_post_type) . '</option>';
+                $field_post_type_name = $field_post_type;
+                $field_post_type_object = get_post_type_object($field_post_type);
+                if($field_post_type_object){
+                    $field_post_type_name = $field_post_type_object->labels->singular_name;
+                }
+
+                $content .= '<select ' . ($is_multiple ? 'multiple' : '') . ' ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf($select_string, strtolower($field_post_type_name)) . '</option>';
                 foreach ($wpq_post_type as $wpq_post) {
                     $key = $wpq_post->ID;
-                    $content .= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>';
+                    $selected = ($key == $value) || (is_array($value) && in_array($key, $value));
+                    $content .= '<option value="' . htmlentities($key) . '" ' . ($selected ? 'selected="selected"' : '') . '>';
                     $content .= get_the_title($wpq_post) . ' - #' . $key;
                     $content .= '</option>';
                 }
@@ -713,6 +742,7 @@ class WPUOptions {
             'label' => $id,
             'label_check' => '',
             'type' => 'text',
+            'multiple' => false,
             'test' => '',
             'datas' => array(
                 __('No', 'wpuoptions'),
@@ -789,6 +819,7 @@ class WPUOptions {
      * @return boolean
      */
     private function test_field_value($field, $value) {
+
         $return = true;
         switch ($field['test']) {
         case 'email':
@@ -799,8 +830,14 @@ class WPUOptions {
         case 'taxonomy':
         case 'category':
         case 'page':
-            if (!ctype_digit($value)) {
-                $return = false;
+        case 'post':
+            if ($field['multiple']) {
+                return wpuoptions_is_array_of_numbers($value);
+            } else {
+
+                if (!ctype_digit($value)) {
+                    $return = false;
+                }
             }
             break;
         case 'radio':
@@ -901,7 +938,7 @@ function wputh_l18n_get_option($name, $lang = false) {
         if (isset($q_config['language'])) {
             $lang = $q_config['language'];
         }
-        if(function_exists('pll_current_language')){
+        if (function_exists('pll_current_language')) {
             $lang = pll_current_language();
         }
     }
@@ -920,7 +957,7 @@ function wputh_l18n_get_option($name, $lang = false) {
     if (isset($q_config['language'])) {
         $default_language = $q_config['enabled_languages'][0];
     }
-    if(function_exists('pll_default_language')){
+    if (function_exists('pll_default_language')) {
         $default_language = pll_default_language();
     }
     $default_language = apply_filters('wputh_l18n_get_option__defaultlang', $default_language);
@@ -976,4 +1013,16 @@ function wpu_options_get_media($option_name, $size = 'thumbnail') {
     }
 
     return $attachment_details;
+}
+
+function wpuoptions_is_array_of_numbers($array = array()) {
+    if (!is_array($array)) {
+        return false;
+    }
+    foreach ($array as $value) {
+        if (!is_numeric($value)) {
+            return false;
+        }
+    }
+    return true;
 }
