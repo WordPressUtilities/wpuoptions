@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.32.0
+Version: 4.32.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.32.0',
+        'plugin_version' => '4.32.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -643,14 +643,12 @@ class WPUOptions {
                 }
                 $content .= wp_dropdown_categories($dropdown_options);
                 break;
+
             case 'page':
-                $content .= wp_dropdown_pages(array(
-                    'name' => $idf,
-                    'selected' => $value,
-                    'echo' => 0
-                ));
-                break;
             case 'post':
+                if ($field['type'] == 'page') {
+                    $field_post_type = 'page';
+                }
 
                 $req = array(
                     'posts_per_page' => -1,
@@ -673,8 +671,15 @@ class WPUOptions {
 
                 $field_post_type_name = $field_post_type;
                 $field_post_type_object = get_post_type_object($field_post_type);
-                if($field_post_type_object){
+                if ($field_post_type_object) {
                     $field_post_type_name = $field_post_type_object->labels->singular_name;
+                    if ($is_multiple) {
+                        $field_post_type_name = $field_post_type_object->labels->name;
+                    }
+                }
+
+                if ($is_multiple) {
+                    $select_string = __('Select some %s', 'wpuoptions');
                 }
 
                 $content .= '<select ' . ($is_multiple ? 'multiple' : '') . ' ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf($select_string, strtolower($field_post_type_name)) . '</option>';

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2019-02-08 18:26+0100\n"
+"POT-Creation-Date: 2019-02-09 22:09+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Darklg <darklg.blog@gmail.com>\n"
 "Language-Team: \n"
@@ -133,27 +133,32 @@ msgstr "Modifier ce fichier"
 msgid "Do you really want to remove this file ?"
 msgstr "Voulez-vous vraiment retirer ce fichier ?"
 
-#: .././wpuoptions.php:669
+#: .././wpuoptions.php:667
 #, php-format
 msgctxt "male"
 msgid "Select a %s"
 msgstr "Sélectionner un %s"
 
-#: .././wpuoptions.php:671
+#: .././wpuoptions.php:669
 #, php-format
 msgctxt "female"
 msgid "Select a %s"
 msgstr "Sélectionner une %s"
 
-#: .././wpuoptions.php:691
+#: .././wpuoptions.php:682
+#, php-format
+msgid "Select some %s"
+msgstr "Sélectionnez des %s"
+
+#: .././wpuoptions.php:696
 msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
-#: .././wpuoptions.php:748
+#: .././wpuoptions.php:753
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:749
+#: .././wpuoptions.php:754
 msgid "Yes"
 msgstr "Oui"
 
