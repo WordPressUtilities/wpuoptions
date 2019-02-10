@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.32.1
+Version: 4.32.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.32.1',
+        'plugin_version' => '4.32.2',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -216,8 +216,8 @@ class WPUOptions {
             }
         }
         if ($has_multiple) {
-            wp_register_style('select2css', 'https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.3/select2.css', false, '3.5.3', 'all');
-            wp_register_script('select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/3.5.3/select2.js', array('jquery'), '3.5.3', true);
+            wp_register_style('select2css', plugins_url('assets/select2/css/select2.min.css', __FILE__), false, $this->options['plugin_version'], 'all');
+            wp_register_script('select2', plugins_url('assets/select2/js/select2.min.js', __FILE__), array('jquery'), $this->options['plugin_version'], true);
             wp_enqueue_style('select2css');
             wp_enqueue_script('select2');
         }
@@ -682,7 +682,8 @@ class WPUOptions {
                     $select_string = __('Select some %s', 'wpuoptions');
                 }
 
-                $content .= '<select ' . ($is_multiple ? 'multiple' : '') . ' ' . $idname . '"><option value="" disabled selected style="display:none;">' . sprintf($select_string, strtolower($field_post_type_name)) . '</option>';
+                $option_label = '<option value="" disabled selected style="display:none;">' . sprintf($select_string, strtolower($field_post_type_name)) . '</option>';
+                $content .= '<select ' . ($is_multiple ? 'multiple' : '') . ' ' . $idname . '">' . ($is_multiple ? '' : $option_label);
                 foreach ($wpq_post_type as $wpq_post) {
                     $key = $wpq_post->ID;
                     $selected = ($key == $value) || (is_array($value) && in_array($key, $value));
