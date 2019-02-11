@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.32.2
+Version: 4.31.3
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.32.2',
+        'plugin_version' => '4.31.3',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -39,12 +39,6 @@ class WPUOptions {
      * Init plugin
      */
     public function __construct() {
-        if (!is_admin()) {
-            return;
-        }
-        $this->hooks();
-        $this->set_options();
-        $this->admin_hooks();
 
         include dirname(__FILE__) . '/inc/WPUBaseUpdate/WPUBaseUpdate.php';
         $this->settings_update = new \wpuoptions\WPUBaseUpdate(
@@ -52,6 +46,12 @@ class WPUOptions {
             'wpuoptions',
             $this->options['plugin_version']);
 
+        if (!is_admin()) {
+            return;
+        }
+        $this->hooks();
+        $this->set_options();
+        $this->admin_hooks();
     }
 
     public function load_plugin_textdomain() {
