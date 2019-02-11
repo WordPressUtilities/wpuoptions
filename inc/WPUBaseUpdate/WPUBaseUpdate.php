@@ -71,6 +71,10 @@ class WPUBaseUpdate {
 
     public function filter_update_plugins($update_plugins) {
 
+        if (!is_object($update_plugins)) {
+            return $update_plugins;
+        }
+
         if (!isset($update_plugins->response) || !is_array($update_plugins->response)) {
             $update_plugins->response = array();
         }
