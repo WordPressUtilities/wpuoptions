@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.31.4
+Version: 4.31.5
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.31.4',
+        'plugin_version' => '4.31.5',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -28,6 +28,8 @@ class WPUOptions {
             'name' => ''
         )
     );
+
+    private $current_tab = 'default';
 
     private $default_tab = array(
         'default' => array(
@@ -49,6 +51,7 @@ class WPUOptions {
         if (!is_admin()) {
             return;
         }
+
         $this->hooks();
         $this->set_options();
         $this->admin_hooks();
@@ -90,6 +93,7 @@ class WPUOptions {
         $this->fields = apply_filters('wpu_options_fields', array());
         $this->boxes = apply_filters('wpu_options_boxes', $this->default_box);
         $this->tabs = apply_filters('wpu_options_tabs', $this->default_tab);
+        $this->current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : 'default';
     }
 
     /**
@@ -441,8 +445,6 @@ class WPUOptions {
      */
     private function admin_form() {
 
-        $current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : 'default';
-
         $content = '';
         $has_lang = false;
 
@@ -450,7 +452,7 @@ class WPUOptions {
             $content .= '<div id="icon-themes" class="icon32"><br></div>';
             $content .= '<h2 class="nav-tab-wrapper">';
             foreach ($this->tabs as $idtab => $tab) {
-                $current_class = ($current_tab == $idtab ? 'nav-tab-active' : '');
+                $current_class = ($this->current_tab == $idtab ? 'nav-tab-active' : '');
                 $tab_url = '';
                 if ($idtab != 'default') {
                     $tab_url = '&tab=' . $idtab;
@@ -472,7 +474,7 @@ class WPUOptions {
         foreach ($this->boxes as $idbox => $box) {
             $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
             $box_usercan = isset($box['current_user_can']) ? current_user_can($box['current_user_can']) : true;
-            if ($box_tab != $current_tab || !$box_usercan) {
+            if ($box_tab != $this->current_tab || !$box_usercan) {
                 continue;
             }
             $content_tmp = '';
@@ -1021,6 +1023,12 @@ function wpu_options_get_media($option_name, $size = 'thumbnail') {
     return $attachment_details;
 }
 
+/**
+ * Check if a variable is an array of numbers
+ *
+ * @param  array  $array   array to check
+ * @return bool            test result
+ */
 function wpuoptions_is_array_of_numbers($array = array()) {
     if (!is_array($array)) {
         return false;
