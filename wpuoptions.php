@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.31.5
+Version: 4.33.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.31.5',
+        'plugin_version' => '4.33.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -659,15 +659,20 @@ class WPUOptions {
                     'order' => 'ASC'
                 );
 
-                $cache_id = 'wpuoptions_postcache_' . md5(serialize($req));
+                $cache_id = 'wpuoptions_post_cache_' . md5(serialize($req));
                 $wpq_post_type = wp_cache_get($cache_id);
                 if (!is_array($wpq_post_type)) {
-                    $wpq_post_type = get_posts($req);
+                    $wpq_post_type_raw = get_posts($req);
+                    $wpq_post_type = array();
+                    foreach ($wpq_post_type_raw as $item) {
+                        $wpq_post_type[$item->ID] = $item->post_title;
+                    }
+                    unset($wpq_post_type_raw);
                     wp_cache_set($cache_id, $wpq_post_type, '', 30);
                 }
 
                 $select_string = _x('Select a %s', 'male', 'wpuoptions');
-                if (is_array($wpu_posttypes) && isset($wpu_posttypes[$field_post_type], $wpu_posttypes[$field_post_type]['female']) && $wpu_posttypes[$field_post_type]['female']) {
+                if ($field_post_type == 'page' || (is_array($wpu_posttypes) && isset($wpu_posttypes[$field_post_type], $wpu_posttypes[$field_post_type]['female']) && $wpu_posttypes[$field_post_type]['female'])) {
                     $select_string = _x('Select a %s', 'female', 'wpuoptions');
                 }
 
@@ -686,11 +691,10 @@ class WPUOptions {
 
                 $option_label = '<option value="" disabled selected style="display:none;">' . sprintf($select_string, strtolower($field_post_type_name)) . '</option>';
                 $content .= '<select ' . ($is_multiple ? 'multiple' : '') . ' ' . $idname . '">' . ($is_multiple ? '' : $option_label);
-                foreach ($wpq_post_type as $wpq_post) {
-                    $key = $wpq_post->ID;
+                foreach ($wpq_post_type as $key => $wpq_post_title) {
                     $selected = ($key == $value) || (is_array($value) && in_array($key, $value));
                     $content .= '<option value="' . htmlentities($key) . '" ' . ($selected ? 'selected="selected"' : '') . '>';
-                    $content .= get_the_title($wpq_post) . ' - #' . $key;
+                    $content .= esc_html(strip_tags($wpq_post_title)) . ' - #' . $key;
                     $content .= '</option>';
                 }
                 $content .= '</select>';
