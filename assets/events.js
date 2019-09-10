@@ -26,7 +26,7 @@ var wputh_options_set_exportcheck = function() {
 ---------------------------------------------------------- */
 
 var wputh_options_set_multiple_selects = function() {
-    if(!jQuery.fn.select2){
+    if (!jQuery.fn.select2) {
         return;
     }
     $('.wpu-options-box select[multiple]').select2();
@@ -210,3 +210,46 @@ var wputh_options_set_langs = function() {
 
     $langs.eq(0).trigger('click');
 };
+
+/* ----------------------------------------------------------
+  Heartbeat
+---------------------------------------------------------- */
+
+jQuery(document).ready(function($) {
+
+    var $body = jQuery('body'),
+        $document = jQuery(document),
+        $form = jQuery('.wpu-options-form'),
+        textVar = wpuoptions__last_updated__text;
+        versionVar = 'wpuoptions__last_updated';
+
+    $document.on('heartbeat-send', function(e, data) {
+        data[versionVar] = window[versionVar];
+    });
+
+    $document.on('heartbeat-tick', function(e, data) {
+        /* Stop is var is not present */
+        if (!data[versionVar]) {
+            return;
+        }
+
+        /* If saved version is not the same */
+        if (data[versionVar] != window[versionVar]) {
+            /* Only one alert */
+            if ($body.attr('data-' + versionVar) == '1') {
+                return;
+            }
+            $body.attr('data-' + versionVar, 1);
+
+            /* Visible alert */
+            alert(textVar);
+
+            /* Insert a notice below the submit button */
+            $form.append(jQuery('<div class="notice notice-warning"><p>' + textVar + '</p></div>'))
+        }
+
+    });
+
+    // Move interval to fast ( every 5 sec )
+    wp.heartbeat.interval('fast');
+});

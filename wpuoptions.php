@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.33.0
+Version: 4.34.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.33.0',
+        'plugin_version' => '4.34.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -116,6 +116,11 @@ class WPUOptions {
      * Set admin hooks
      */
     private function admin_hooks() {
+
+        add_filter('heartbeat_received', array(&$this,
+            'add_heartbeat_data'
+        ), 10, 2);
+
         add_action('wp_loaded', array(&$this,
             'admin_export_page_postAction'
         ));
@@ -248,7 +253,27 @@ class WPUOptions {
             $content .= '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
         }
         $content .= '</div>';
+        $content .= '<script>';
+        $content .= 'var wpuoptions__last_updated="' . get_option('wpuoptions__last_updated') . '";';
+        $content .= 'var wpuoptions__last_updated__text="' . __('Warning : The saved options may be different than yours. Maybe someone changed them while you were editing ?', 'wpuoptions') . '";';
+        $content .= '</script>';
+
         echo $content;
+    }
+
+    /**
+     * Store version in heartbeat
+     */
+    public function add_heartbeat_data($response, $data) {
+
+        if (isset($data['wpuoptions__last_updated'])) {
+            $wpuoptions__last_updated = get_option('wpuoptions__last_updated');
+            if ($wpuoptions__last_updated) {
+                $response['wpuoptions__last_updated'] = $wpuoptions__last_updated;
+            }
+        }
+
+        return $response;
     }
 
     /**
@@ -428,6 +453,7 @@ class WPUOptions {
                     }
                 }
             }
+            update_option('wpuoptions__last_updated', time());
             if (!empty($updated_options)) {
                 $content .= '<div class="updated"><p><strong>' . __('Success!', 'wpuoptions') . '</strong><br />' . implode('<br />', $updated_options) . '</p></div>';
             }
