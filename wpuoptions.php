@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.34.0
+Version: 4.34.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.34.0',
+        'plugin_version' => '4.34.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -645,14 +645,19 @@ class WPUOptions {
                 $content_preview = '';
                 if (is_numeric($value)) {
                     $image = wp_get_attachment_image_src($value, 'big');
+                    $file = wp_get_attachment_url($value);
                     if (isset($image[0])) {
                         $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="' . $image[0] . '?v=' . time() . '" alt="" /></div>';
-                    } else {
-                        $file = wp_get_attachment_url($value);
+                    } else if ($file) {
                         $file = str_replace($upload_dir['baseurl'], '', $file);
                         $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><div class="wpu-options-upload-preview--file">' . $file . '</div></div>';
                     }
-                    $btn_label_display = $btn_edit_label;
+                    /* Check if we got a file */
+                    if (!empty($content_preview)) {
+                        $btn_label_display = $btn_edit_label;
+                    } else {
+                        $value = '';
+                    }
                 }
 
                 $content .= '<div data-removethis="' . $upload_dir['baseurl'] . '" data-type="' . $field['type'] . '" data-confirm="' . $btn_confirm_delete . '" data-defaultlabel="' . esc_attr($btn_label) . '" data-label="' . esc_attr($btn_edit_label) . '" id="preview-' . $idf . '">' . $content_preview . '</div>' . '<a href="#" data-for="' . $idf . '" class="button button-small wpuoptions_add_media">' . $btn_label_display . '</a>' . '<input class="hidden-value" type="hidden" ' . $idname . ' value="' . $value . '" />';

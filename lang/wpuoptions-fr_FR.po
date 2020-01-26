@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2019-09-10 10:05+0200\n"
+"POT-Creation-Date: 2020-01-26 18:11+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Darklg <darklg.blog@gmail.com>\n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.2.3\n"
+"X-Generator: Poedit 2.2.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-KeywordsList: __;_e;_x:1,2c;_n:1,2;esc_attr__\n"
@@ -141,32 +141,32 @@ msgstr "Modifier ce fichier"
 msgid "Do you really want to remove this file ?"
 msgstr "Voulez-vous vraiment retirer ce fichier ?"
 
-#: .././wpuoptions.php:700
+#: .././wpuoptions.php:705
 #, php-format
 msgctxt "male"
 msgid "Select a %s"
 msgstr "Sélectionner un %s"
 
-#: .././wpuoptions.php:702
+#: .././wpuoptions.php:707
 #, php-format
 msgctxt "female"
 msgid "Select a %s"
 msgstr "Sélectionner une %s"
 
-#: .././wpuoptions.php:715
+#: .././wpuoptions.php:720
 #, php-format
 msgid "Select some %s"
 msgstr "Sélectionnez des %s"
 
-#: .././wpuoptions.php:729
+#: .././wpuoptions.php:734
 msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
-#: .././wpuoptions.php:786
+#: .././wpuoptions.php:791
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:787
+#: .././wpuoptions.php:792
 msgid "Yes"
 msgstr "Oui"
 
