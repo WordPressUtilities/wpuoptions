@@ -57,10 +57,11 @@ function set_wputh_options_fields( $options ) {
 }
 ```
 
-Fields types :
+Field types :
 ---
 
 * Default : A "text" input.
+* "title" : A simple section separator.
 * "editor" : A WYSIWYG editor used in the content of a post.
 * "file" : An attached file.
 * "media" : An attached file present in the Media editor.
@@ -77,7 +78,7 @@ Fields types :
 * "number" : A "number" input
 * "url" : A "url" input
 
-Fields tests :
+Field tests :
 ---
 
 * "email" : value must be a valid email

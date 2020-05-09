@@ -19,6 +19,10 @@
     table-layout: fixed;
 }
 
+.wpu-options-box td.td-title h4 {
+    margin-top: 0;
+}
+
 .wpu-options-box td.td-label {
     z-index: 1;
     position: relative;

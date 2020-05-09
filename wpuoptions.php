@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.34.1
+Version: 4.35.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.34.1',
+        'plugin_version' => '4.35.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -593,6 +593,8 @@ class WPUOptions {
                 $value = $originalvalue;
             }
 
+            $field_required = isset($field['required']) && $field['required'];
+
             $placeholder = '';
             if (isset($field['placeholder'])) {
                 $placeholder = ' placeholder="' . esc_attr($field['placeholder']) . '"';
@@ -604,18 +606,27 @@ class WPUOptions {
             }
 
             $content .= '<tr class="wpu-options-box" ' . $lang_attr . '>';
-            $content .= '<td class="td-label">';
-            if (WP_DEBUG && current_user_can('activate_plugins')) {
-                $helper = "get_option('" . $field_version['id'] . "')";
-                if (!empty($field_version['prefix_opt'])) {
-                    $helper = "wputh_l18n_get_option('" . $field_version['id'] . "')";
+            if ($field['type'] != 'title') {
+                $content .= '<td class="td-label">';
+                if (WP_DEBUG && current_user_can('activate_plugins')) {
+                    $helper = "get_option('" . $field_version['id'] . "')";
+                    if (!empty($field_version['prefix_opt'])) {
+                        $helper = "wputh_l18n_get_option('" . $field_version['id'] . "')";
+                    }
+                    $content .= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
+                    $content .= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
                 }
-                $content .= '<span class="wpu-options-helper"><span class="dashicons dashicons-editor-help"></span></span>';
-                $content .= '<div class="wpu-options-field-info" contenteditable="true">' . $helper . '</div>';
+                $content .= '<label for="' . $idf . '">' . $field['label'];
+                if ($field_required) {
+                    $content .= '<em>*</em>';
+                }
+                $content .= '&nbsp;: </label>';
+                $content .= '</td>';
+                $content .= '<td>';
+            } else {
+                $content .= '<td class="td-title" colspan="2"><h4>' . $field['label'] . '</h4>';
+
             }
-            $content .= '<label for="' . $idf . '">' . $field['label'] . '&nbsp;: </label>';
-            $content .= '</td>';
-            $content .= '<td>';
             $content .= '<div class="' . ($lang_attr != '' ? 'wpufield-has-lang' : '') . '">';
             switch ($field['type']) {
             case 'editor':
@@ -739,15 +750,17 @@ class WPUOptions {
                 break;
             case 'radio':
                 foreach ($field['datas'] as $key => $var) {
-                    $content .= '<label class="label-radio"><input type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . checked($key, $value, 0) . '/> ' . htmlentities($var) . '</label>';
+                    $content .= '<label class="label-radio"><input ' . ($field_required ? 'required="required"' : '') . ' type="radio" name="' . $idf . '" value="' . htmlentities($key) . '"  ' . checked($key, $value, 0) . '/> ' . htmlentities($var) . '</label>';
                 }
                 break;
             case 'textarea':
                 $content .= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
-                break;
             case 'checkbox':
                 $content .= '<input type="hidden" name="' . $idf . '__check" value="1" />';
-                $content .= '<label><input type="checkbox" ' . $idname . ' value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /> ' . $field['label_check'] . '</label>';
+                $content .= '<label><input ' . ($field_required ? 'required="required"' : '') . ' type="checkbox" ' . $idname . ' value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /> ' . $field['label_check'] . '</label>';
+                break;
+            case 'title':
+                $content .= '';
                 break;
 
             /* Multiple cases */
@@ -756,10 +769,10 @@ class WPUOptions {
             case 'email':
             case 'number':
             case 'url':
-                $content .= '<input ' . $placeholder . ' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
+                $content .= '<input ' . ($field_required ? 'required="required"' : '') . ' ' . $placeholder . ' type="' . $field['type'] . '" ' . $idname . ' value="' . $value . '" />';
                 break;
             default:
-                $content .= '<input ' . $placeholder . ' type="text" ' . $idname . ' value="' . $value . '" />';
+                $content .= '<input ' . ($field_required ? 'required="required"' : '') . ' ' . $placeholder . ' type="text" ' . $idname . ' value="' . $value . '" />';
             }
             if (isset($field['help'])) {
                 $content .= '<small class="wpuoptions-help">' . $field['help'] . '</small>';
