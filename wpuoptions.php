@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.35.0
+Version: 4.35.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.35.0',
+        'plugin_version' => '4.35.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -755,6 +755,7 @@ class WPUOptions {
                 break;
             case 'textarea':
                 $content .= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
+                break;
             case 'checkbox':
                 $content .= '<input type="hidden" name="' . $idf . '__check" value="1" />';
                 $content .= '<label><input ' . ($field_required ? 'required="required"' : '') . ' type="checkbox" ' . $idname . ' value="1" ' . ($value == '1' ? 'checked="checked"' : '') . ' /> ' . $field['label_check'] . '</label>';
