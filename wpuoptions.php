@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.35.2
+Version: 4.35.3
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.35.2',
+        'plugin_version' => '4.35.3',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -692,14 +692,15 @@ class WPUOptions {
                 if ($field['type'] == 'page') {
                     $field_post_type = 'page';
                 }
-
                 $req = array(
                     'posts_per_page' => -1,
                     'post_type' => $field_post_type,
                     'orderby' => 'name',
                     'order' => 'ASC'
                 );
-
+                if (isset($field['lang'], $field_version['idlang']) && $field['lang']) {
+                    $req['lang'] = $field_version['idlang'];
+                }
                 $cache_id = 'wpuoptions_post_cache_' . md5(serialize($req));
                 $wpq_post_type = wp_cache_get($cache_id);
                 if (!is_array($wpq_post_type)) {
