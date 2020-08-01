@@ -134,13 +134,17 @@ var wputh_options_set_media = function() {
                 $preview = jQuery('#preview-' + wpuopt_datafor),
                 previewContent = '<div class="wpu-options-upload-preview"><span class="x">&times;</span>';
 
-            if ($preview.data('type') == 'file') {
-                var att = attachment.url;
+            var att = false;
+            if (attachment.sizes && attachment.sizes.medium) {
+                att = attachment.sizes.medium.url;
+            }
+            if (!att) {
+                att = attachment.url;
                 att = att.replace($preview.data('removethis'), '');
                 previewContent += '<div class="wpu-options-upload-preview--file">' + att + '</div>';
             }
             else {
-                previewContent += '<img src="' + attachment.url + '" />';
+                previewContent += '<img src="' + att + '" />';
             }
             previewContent += '</div>';
 
@@ -220,7 +224,7 @@ jQuery(document).ready(function($) {
     var $body = jQuery('body'),
         $document = jQuery(document),
         $form = jQuery('.wpu-options-form'),
-        textVar = wpuoptions__last_updated__text;
+        textVar = wpuoptions__last_updated__text,
         versionVar = 'wpuoptions__last_updated';
 
     $document.on('heartbeat-send', function(e, data) {

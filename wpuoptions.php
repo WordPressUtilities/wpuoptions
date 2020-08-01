@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.35.3
+Version: 4.35.4
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.35.3',
+        'plugin_version' => '4.35.4',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -654,7 +654,7 @@ class WPUOptions {
                 $btn_label_display = $btn_label;
                 $content_preview = '';
                 if (is_numeric($value)) {
-                    $image = wp_get_attachment_image_src($value, 'big');
+                    $image = wp_get_attachment_image_src($value, 'medium');
                     $file = wp_get_attachment_url($value);
                     if (isset($image[0])) {
                         $content_preview = '<div class="wpu-options-upload-preview"><span class="x">&times;</span><img src="' . $image[0] . '?v=' . time() . '" alt="" /></div>';
