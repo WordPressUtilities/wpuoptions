@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.35.4
+Version: 4.35.5
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.35.4',
+        'plugin_version' => '4.35.5',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -674,17 +674,28 @@ class WPUOptions {
                 break;
             case 'taxonomy':
             case 'category':
-                $dropdown_options = array(
-                    'name' => $idf,
-                    'selected' => $value,
-                    'echo' => 0,
-                    'hide_empty' => false,
-                    'hide_if_empty' => false
+                $req = array(
+                    'orderby' => 'name',
+                    'order' => 'ASC',
+                    'taxonomy' => 'category',
+                    'hide_empty' => false
                 );
                 if (isset($field['taxonomy'])) {
-                    $dropdown_options['taxonomy'] = $field['taxonomy'];
+                    $req['taxonomy'] = $field['taxonomy'];
                 }
-                $content .= wp_dropdown_categories($dropdown_options);
+                if (isset($field_version['idlang']) && $field_version['idlang']) {
+                    $req['lang'] = $field_version['idlang'];
+                }
+                $content .= '<select ' . $idname . '>';
+                $_terms = get_terms($req);
+                foreach ($_terms as $_term) {
+                    $selected = ($_term->term_taxonomy_id == $value);
+                    $content .= '<option ' . ($selected ? 'selected="selected"' : '') . ' value="' . $_term->term_taxonomy_id . '">';
+                    $content .= esc_html($_term->name) . ' - #' . $_term->term_taxonomy_id;
+                    $content .= '</option>';
+                }
+                $content .= '</select>';
+
                 break;
 
             case 'page':
@@ -742,7 +753,7 @@ class WPUOptions {
                 $content .= '</select>';
                 break;
             case 'select':
-                $content .= '<select ' . $idname . '"><option value="" disabled selected style="display:none;">' . __('Select a value', 'wpuoptions') . '</option>';
+                $content .= '<select ' . $idname . '><option value="" disabled selected style="display:none;">' . __('Select a value', 'wpuoptions') . '</option>';
                 foreach ($field['datas'] as $key => $var) {
                     $content .= '<option value="' . htmlentities($key) . '" ' . selected($key, $value, 0) . '>' . htmlentities($var) . '</option>';
                 }
