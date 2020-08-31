@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.35.5
+Version: 4.35.6
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.35.5',
+        'plugin_version' => '4.35.6',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -561,6 +561,7 @@ class WPUOptions {
         $content = '';
         $upload_dir = wp_upload_dir();
         $wpu_posttypes = apply_filters('wputh_get_posttypes', array());
+        $wpu_taxonomies = apply_filters('wputh_get_taxonomies', array());
         foreach ($fields_versions as $field_version) {
             $idf = $this->get_field_id($field_version['prefix_opt'] . $field_version['id']);
             $field = $this->get_field_datas($field_version['id'], $field_version['field']);
@@ -680,13 +681,29 @@ class WPUOptions {
                     'taxonomy' => 'category',
                     'hide_empty' => false
                 );
+
                 if (isset($field['taxonomy'])) {
                     $req['taxonomy'] = $field['taxonomy'];
+                } else {
+                    $req['taxonomy'] = 'category';
                 }
+
                 if (isset($field_version['idlang']) && $field_version['idlang']) {
                     $req['lang'] = $field_version['idlang'];
                 }
+
+                $select_string = _x('Select a %s', 'male', 'wpuoptions');
+                if ($req['taxonomy'] == 'category' || (is_array($wpu_taxonomies) && isset($wpu_taxonomies[$req['taxonomy']], $wpu_taxonomies[$req['taxonomy']]['female']) && $wpu_taxonomies[$req['taxonomy']]['female'])) {
+                    $select_string = _x('Select a %s', 'female', 'wpuoptions');
+                }
+                $field_taxonomy_name = $req['taxonomy'];
+                $field_taxonomy_object = get_taxonomy($req['taxonomy']);
+                if ($field_taxonomy_object) {
+                    $field_taxonomy_name = $field_taxonomy_object->labels->singular_name;
+                }
+
                 $content .= '<select ' . $idname . '>';
+                $content .= '<option value="" disabled selected style="display:none;">' . sprintf($select_string, strtolower($field_taxonomy_name)) . '</option>';
                 $_terms = get_terms($req);
                 foreach ($_terms as $_term) {
                     $selected = ($_term->term_taxonomy_id == $value);
