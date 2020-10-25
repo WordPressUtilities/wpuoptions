@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.35.6
+Version: 4.36.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.35.6',
+        'plugin_version' => '4.36.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -996,6 +996,14 @@ class WPUOptions {
                 $languages[$lang->slug] = $lang->name;
             }
         }
+
+        if (function_exists('icl_get_languages')) {
+            $wpml_lang = icl_get_languages();
+            foreach ($wpml_lang as $lang) {
+                $languages[$lang['code']] = $lang['native_name'];
+            }
+        }
+
         return $languages;
     }
 }
@@ -1026,6 +1034,9 @@ function wputh_l18n_get_option($name, $lang = false) {
         if (function_exists('pll_current_language')) {
             $lang = pll_current_language();
         }
+        if (defined('ICL_LANGUAGE_CODE')) {
+            $lang = ICL_LANGUAGE_CODE;
+        }
     }
 
     /* Get meta value */
@@ -1044,6 +1055,9 @@ function wputh_l18n_get_option($name, $lang = false) {
     }
     if (function_exists('pll_default_language')) {
         $default_language = pll_default_language();
+    }
+    if (defined('ICL_LANGUAGE_CODE')) {
+        $default_language = apply_filters('wpml_default_language', NULL);
     }
     $default_language = apply_filters('wputh_l18n_get_option__defaultlang', $default_language);
 
