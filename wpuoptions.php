@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.36.0
+Version: 4.37.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.36.0',
+        'plugin_version' => '4.37.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -80,9 +80,6 @@ class WPUOptions {
         add_action('init', array(&$this,
             'set_fields'
         ));
-        add_action('init', array(&$this,
-            'default_values'
-        ));
     }
 
     /**
@@ -94,13 +91,28 @@ class WPUOptions {
         $this->boxes = apply_filters('wpu_options_boxes', $this->default_box);
         $this->tabs = apply_filters('wpu_options_tabs', $this->default_tab);
         $this->current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : 'default';
-    }
 
-    /**
-     * Check that every option is defined, to avoid non autoloading options
-     */
-    public function default_values() {
+        /* Default values */
+        foreach ($this->boxes as $id => $box) {
+            if (!isset($box['tab'])) {
+                $this->boxes[$id]['tab'] = 'default';
+            }
+            $this->boxes[$id]['current_tab'] = $this->boxes[$id]['tab'] == $this->current_tab;
+        }
+
         foreach ($this->fields as $id => $field) {
+
+            /* Default value */
+            $this->fields[$id] = $this->get_field_datas($id, $field);
+
+            /* Load box details */
+            if (isset($this->boxes[$this->fields[$id]['box']])) {
+                $box = $this->boxes[$this->fields[$id]['box']];
+                $this->fields[$id]['tab'] = $box['tab'];
+                $this->fields[$id]['current_tab'] = $box['current_tab'];
+            }
+
+            /* Default value */
             $default_value = '';
             $opt = get_option($id);
             if ($opt === false && !isset($field['noautoload'])) {
@@ -208,7 +220,23 @@ class WPUOptions {
      * Enqueue JS
      */
     public function add_assets_js() {
-        wp_enqueue_media();
+        $has_media = false;
+        $has_multiple = false;
+        foreach ($this->fields as $field) {
+            /* Only on current tab */
+            if (!$field['current_tab']) {
+                continue;
+            }
+            if (isset($field['multiple']) && $field['multiple']) {
+                $has_multiple = true;
+            }
+            if (isset($field['type']) && $field['type'] == 'media') {
+                $has_media = true;
+            }
+        }
+        if ($has_media) {
+            wp_enqueue_media();
+        }
         wp_enqueue_script('wpuoptions_scripts', plugins_url('assets/events.js', __FILE__), array(
             'jquery-ui-core',
             'jquery-ui-widget',
@@ -218,12 +246,6 @@ class WPUOptions {
             'iris'
         ), $this->options['plugin_version']);
 
-        $has_multiple = false;
-        foreach ($this->fields as $field) {
-            if (isset($field['multiple']) && $field['multiple']) {
-                $has_multiple = true;
-            }
-        }
         if ($has_multiple) {
             wp_register_style('select2css', plugins_url('assets/select2/css/select2.min.css', __FILE__), false, $this->options['plugin_version'], 'all');
             wp_register_script('select2', plugins_url('assets/select2/js/select2.min.js', __FILE__), array('jquery'), $this->options['plugin_version'], true);
@@ -410,10 +432,9 @@ class WPUOptions {
 
             foreach ($testfields as $id => $field) {
                 $idf = $this->get_field_id($id);
-                $is_checkbox = (isset($field['type']) && $field['type'] == 'checkbox');
+                $is_checkbox = $field['type'] == 'checkbox';
                 $is_multiple = isset($field['multiple']) && $field['multiple'];
                 if (isset($_POST[$idf]) || $is_checkbox) {
-                    $field = $this->get_field_datas($id, $field);
                     $old_option = get_option($id);
                     if ($is_checkbox) {
                         /* Check if control field exists before checking value */
@@ -860,7 +881,7 @@ class WPUOptions {
 
         // Array of fields:values
         foreach ($this->fields as $id => $field) {
-            $opt_field = $this->get_field_datas($id, $field);
+            $opt_field = $field;
 
             // If this field has i18n
             if (isset($opt_field['lang']) && !empty($languages)) {
