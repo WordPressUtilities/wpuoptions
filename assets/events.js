@@ -5,6 +5,7 @@ jQuery(document).ready(function($) {
     wputh_options_set_accordion();
     wputh_options_set_langs();
     wputh_options_set_editor();
+    wputh_options_set_wp_link();
     wputh_options_set_multiple_selects();
     wputh_options_set_polyfills(form);
 });
@@ -18,6 +19,53 @@ var wputh_options_set_exportcheck = function() {
         var $this = jQuery(this),
             $parent = $this.closest('.wpu-export-section');
         $parent.find('.wpu-export-boxes-check').prop("checked", $this.prop('checked'));
+    });
+};
+
+/* ----------------------------------------------------------
+  Set wp-link
+---------------------------------------------------------- */
+
+var wputh_options_set_wp_link = function() {
+    jQuery('[data-wpuoptions-wplink]').each(function() {
+        var $this = jQuery(this),
+            $parent = $this.parent(),
+            $preview = $parent.find('.link-preview'),
+            $textarea = $parent.find('textarea');
+
+        $this.click(function() {
+            /* Open link */
+            wpLink.open($textarea.attr('id'));
+
+            /* Set values */
+            var src_json = JSON.parse($textarea.val());
+            if (typeof src_json == 'object') {
+                if (src_json.href) {
+                    jQuery('#wp-link-url').val(src_json.href);
+                }
+                if (src_json.text) {
+                    jQuery('#wp-link-text').val(src_json.text);
+                }
+                if (src_json.target && src_json.target == '_blank') {
+                    jQuery('#wp-link-target').prop('checked', 1);
+                }
+            }
+
+            /* Update function */
+            wpLink.htmlUpdate = function() {
+                /* Save value */
+                var attrs = wpLink.getAttrs();
+                attrs.text = jQuery('#wp-link-text').val();
+                $textarea.val(JSON.stringify(attrs));
+
+                /* Update preview */
+                var $a = document.createElement('a');
+                $a.href = attrs.href;
+                $a.innerText = attrs.text;
+                $preview.html($a.outerHTML);
+                wpLink.close();
+            };
+        });
     });
 };
 

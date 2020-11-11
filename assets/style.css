@@ -509,3 +509,30 @@
     margin: auto;
     background-color: #369;
 }
+
+/* ----------------------------------------------------------
+  Link
+---------------------------------------------------------- */
+
+.wpuoptions-type-link {
+    z-index: 1;
+    position: relative;
+}
+
+.wpuoptions-type-link .link-preview {
+    margin-top: 0;
+}
+
+.wpuoptions-type-link .link-preview:empty {
+    display: none;
+}
+
+.wpuoptions-type-link textarea {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: -100vw;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}

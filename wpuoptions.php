@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.37.0
+Version: 4.38.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.37.0',
+        'plugin_version' => '4.38.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -222,6 +222,8 @@ class WPUOptions {
     public function add_assets_js() {
         $has_media = false;
         $has_multiple = false;
+        $has_wplink = false;
+
         foreach ($this->fields as $field) {
             /* Only on current tab */
             if (!$field['current_tab']) {
@@ -232,6 +234,9 @@ class WPUOptions {
             }
             if (isset($field['type']) && $field['type'] == 'media') {
                 $has_media = true;
+            }
+            if (isset($field['type']) && $field['type'] == 'wp_link') {
+                $has_wplink = true;
             }
         }
         if ($has_media) {
@@ -251,6 +256,12 @@ class WPUOptions {
             wp_register_script('select2', plugins_url('assets/select2/js/select2.min.js', __FILE__), array('jquery'), $this->options['plugin_version'], true);
             wp_enqueue_style('select2css');
             wp_enqueue_script('select2');
+        }
+        if ($has_wplink) {
+            wp_enqueue_script('wplink');
+            wp_enqueue_style('editor-buttons');
+            require_once ABSPATH . "wp-includes/class-wp-editor.php";
+            _WP_Editors::wp_link_dialog();
         }
     }
 
@@ -812,7 +823,20 @@ class WPUOptions {
             case 'title':
                 $content .= '';
                 break;
-
+            case 'wp_link':
+                $html_preview = '';
+                if ($value) {
+                    $json_preview = json_decode(html_entity_decode($value));
+                    if (is_object($json_preview) && isset($json_preview->text) && isset($json_preview->href)) {
+                        $html_preview = '<a onclick="return false;" href="' . esc_url($json_preview->href) . '">' . htmlentities($json_preview->text) . '</a>';
+                    }
+                }
+                $content .= '<div class="wpuoptions-type-link">';
+                $content .= '<p class="link-preview">' . $html_preview . '</p>';
+                $content .= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
+                $content .= '<button class="button button-small" data-wpuoptions-wplink="1" class="link-button" type="button">' . __('Edit link', 'wpuoptions') . '</button>';
+                $content .= '</div>';
+                break;
             /* Multiple cases */
             case 'color':
             case 'date':
@@ -933,6 +957,11 @@ class WPUOptions {
                 $return = false;
             }
             break;
+        case 'wp_link':
+            if (filter_var($value, FILTER_VALIDATE_EMAIL) === false) {
+                $return = false;
+            }
+            break;
         case 'taxonomy':
         case 'category':
         case 'page':
@@ -940,7 +969,6 @@ class WPUOptions {
             if ($field['multiple']) {
                 return wpuoptions_is_array_of_numbers($value);
             } else {
-
                 if (!ctype_digit($value)) {
                     $return = false;
                 }
