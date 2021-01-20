@@ -272,11 +272,11 @@ jQuery(document).ready(function($) {
     var $body = jQuery('body'),
         $document = jQuery(document),
         $form = jQuery('.wpu-options-form'),
-        textVar = wpuoptions__last_updated__text,
+        textVar = wpuoptions__settings.last_updated__text,
         versionVar = 'wpuoptions__last_updated';
 
     $document.on('heartbeat-send', function(e, data) {
-        data[versionVar] = window[versionVar];
+        data[versionVar] = wpuoptions__settings.last_updated;
     });
 
     $document.on('heartbeat-tick', function(e, data) {
@@ -286,7 +286,7 @@ jQuery(document).ready(function($) {
         }
 
         /* If saved version is not the same */
-        if (data[versionVar] != window[versionVar]) {
+        if (data[versionVar] != wpuoptions__settings.last_updated) {
             /* Only one alert */
             if ($body.attr('data-' + versionVar) == '1') {
                 return;
@@ -297,7 +297,7 @@ jQuery(document).ready(function($) {
             alert(textVar);
 
             /* Insert a notice below the submit button */
-            $form.append(jQuery('<div class="notice notice-warning"><p>' + textVar + '</p></div>'))
+            $form.append(jQuery('<div class="notice notice-warning"><p>' + textVar + '</p></div>'));
         }
 
     });

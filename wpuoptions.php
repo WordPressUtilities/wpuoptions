@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 4.38.1
+Version: 5.0.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,11 +17,12 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '4.38.1',
+        'plugin_version' => '5.0.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
     );
+    private $fields_messages = '';
 
     private $default_box = array(
         'default' => array(
@@ -135,6 +136,9 @@ class WPUOptions {
 
         add_action('wp_loaded', array(&$this,
             'admin_export_page_postAction'
+        ));
+        add_action('wp_loaded', array(&$this,
+            'admin_update'
         ));
         add_action('admin_menu', array(&$this,
             'admin_menu'
@@ -251,6 +255,11 @@ class WPUOptions {
             'iris'
         ), $this->options['plugin_version']);
 
+        wp_add_inline_script('wpuoptions_scripts', 'var wpuoptions__settings=' . json_encode(array(
+            'last_updated' => get_option('wpuoptions__last_updated'),
+            'last_updated__text' => __('Warning : The saved options may be different than yours. Maybe someone changed them while you were editing ?', 'wpuoptions')
+        )), 'before');
+
         if ($has_multiple) {
             wp_register_style('select2css', plugins_url('assets/select2/css/select2.min.css', __FILE__), false, $this->options['plugin_version'], 'all');
             wp_register_script('select2', plugins_url('assets/select2/js/select2.min.js', __FILE__), array('jquery'), $this->options['plugin_version'], true);
@@ -280,16 +289,12 @@ class WPUOptions {
         $content = '<div class="wrap">';
         $content .= '<h2>' . $this->options['plugin_publicname'] . '</h2>';
         if (!empty($this->fields)) {
-            $content .= $this->admin_update();
+            $content .= $this->fields_messages;
             $content .= $this->admin_form();
         } else {
             $content .= '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
         }
         $content .= '</div>';
-        $content .= '<script>';
-        $content .= 'var wpuoptions__last_updated="' . get_option('wpuoptions__last_updated') . '";';
-        $content .= 'var wpuoptions__last_updated__text="' . __('Warning : The saved options may be different than yours. Maybe someone changed them while you were editing ?', 'wpuoptions') . '";';
-        $content .= '</script>';
 
         echo $content;
     }
@@ -418,9 +423,15 @@ class WPUOptions {
      *
      * @return unknown
      */
-    private function admin_update() {
+    public function admin_update() {
         $content = '';
-        if (!isset($_POST['plugin_ok'])) {
+        if (!is_admin() || !isset($_GET['page']) || $_GET['page'] != $this->options['plugin_pageslug']) {
+            return;
+        }
+        if (!current_user_can($this->options['plugin_userlevel'])) {
+            return;
+        }
+        if (!isset($_POST['wpuoptions_submit'])) {
             return;
         }
         if (!wp_verify_nonce($_POST['wpuoptions-noncefield'], 'wpuoptions-nonceaction')) {
@@ -492,7 +503,7 @@ class WPUOptions {
                 $content .= '<div class="error"><p><strong>' . __('Fail!', 'wpuoptions') . '</strong><br />' . implode('<br />', $errors) . '</p></div>';
             }
         }
-        return $content;
+        $this->fields_messages = $content;
     }
 
     /**
@@ -556,7 +567,7 @@ class WPUOptions {
             }
         }
 
-        $content .= '<ul><li>' . get_submit_button(__('Update', 'wpuoptions'), 'primary', 'plugin_ok') . '</li></ul>';
+        $content .= '<ul><li>' . get_submit_button(__('Update', 'wpuoptions'), 'primary', 'wpuoptions_submit') . '</li></ul>';
         $content .= wp_nonce_field('wpuoptions-nonceaction', 'wpuoptions-noncefield', 1, 0);
         $content = '<form action="" method="post" class="wpu-options-form ' . ($has_lang ? 'has-lang' : '') . '">' . $content . '</form>';
         return $content;
