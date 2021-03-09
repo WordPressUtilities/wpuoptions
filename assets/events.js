@@ -38,7 +38,11 @@ var wputh_options_set_wp_link = function() {
             wpLink.open($textarea.attr('id'));
 
             /* Set values */
-            var src_json = JSON.parse($textarea.val());
+            var src_json = {};
+            try {
+                src_json = JSON.parse(response);
+            }
+            catch (e) {}
             if (typeof src_json == 'object') {
                 if (src_json.href) {
                     jQuery('#wp-link-url').val(src_json.href);
