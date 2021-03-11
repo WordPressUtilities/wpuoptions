@@ -15,7 +15,7 @@ How to add tabs :
 Put the code below in your theme's functions.php file. Add new tabs to your convenance.
 
 ```php
-add_filter( 'wpu_options_tabs', 'set_wpu_options_tabs', 10, 3 );
+add_filter( 'wpu_options_tabs', 'set_wpu_options_tabs', 10, 1 );
 function set_wpu_options_tabs( $tabs ) {
     $tabs['special_tab'] = array(
         'name' => 'Special tab',
@@ -31,9 +31,10 @@ How to add boxes :
 Put the code below in your theme's functions.php file. Add new boxes to your convenance.
 
 ```php
-add_filter( 'wpu_options_boxes', 'set_wpu_options_boxes', 10, 3 );
+add_filter( 'wpu_options_boxes', 'set_wpu_options_boxes', 10, 1 );
 function set_wpu_options_boxes( $boxes ) {
     $boxes['special_box'] = array(
+        'tab' => 'special_tab',
         'name' => 'Special box'
     );
     return $boxes;
@@ -46,7 +47,7 @@ How to add fields :
 Put the code below in your theme's functions.php file. Add new fields to your convenance.
 
 ```php
-add_filter( 'wpu_options_fields', 'set_wputh_options_fields', 10, 3 );
+add_filter( 'wpu_options_fields', 'set_wputh_options_fields', 10, 1 );
 function set_wputh_options_fields( $options ) {
     $options['wpu_opt_email'] = array(
         'label' => __( 'Email address', 'wputh' ),
