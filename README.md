@@ -9,54 +9,44 @@ How to install :
 * Put this folder to your wp-content/plugins/ folder.
 * Activate the plugin in "Plugins" admin section.
 
-How to add tabs :
+How to add fields :
 ---
 
-Put the code below in your theme's functions.php file. Add new tabs to your convenance.
+Put the code below in your theme's functions.php file.
 
 ```php
-add_filter( 'wpu_options_tabs', 'set_wpu_options_tabs', 10, 1 );
-function set_wpu_options_tabs( $tabs ) {
+
+/* Tabs */
+add_filter( 'wpu_options_tabs', function ( $tabs ) {
     $tabs['special_tab'] = array(
         'name' => 'Special tab',
         'sidebar' => true // Load in sidebar
     );
     return $tabs;
-}
-```
+}, 10, 1 );
 
-How to add boxes :
----
 
-Put the code below in your theme's functions.php file. Add new boxes to your convenance.
-
-```php
-add_filter( 'wpu_options_boxes', 'set_wpu_options_boxes', 10, 1 );
-function set_wpu_options_boxes( $boxes ) {
+/* Boxes */
+add_filter( 'wpu_options_boxes', function ( $boxes ) {
     $boxes['special_box'] = array(
         'tab' => 'special_tab',
         'name' => 'Special box'
     );
     return $boxes;
-}
-```
+}, 10, 1 );
 
-How to add fields :
---
-
-Put the code below in your theme's functions.php file. Add new fields to your convenance.
-
-```php
-add_filter( 'wpu_options_fields', 'set_wputh_options_fields', 10, 1 );
-function set_wputh_options_fields( $options ) {
-    $options['wpu_opt_email'] = array(
-        'label' => __( 'Email address', 'wputh' ),
+/* Fields */
+add_filter( 'wpu_options_fields', function ( $options ) {
+    $options['special_field'] = array(
+        'label' => 'Special field',
         'box' => 'special_box',
         'type' => 'email'
     );
     return $options;
-}
+}, 10, 1 );
+
 ```
+
 
 Field types :
 ---

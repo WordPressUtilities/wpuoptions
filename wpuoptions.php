@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.0.1
+Version: 5.0.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.0.1',
+        'plugin_version' => '5.0.2',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -736,7 +736,7 @@ class WPUOptions {
                 }
 
                 $select_string = _x('Select a %s', 'male', 'wpuoptions');
-                if ($req['taxonomy'] == 'category' || (is_array($wpu_taxonomies) && isset($wpu_taxonomies[$req['taxonomy']], $wpu_taxonomies[$req['taxonomy']]['female']) && $wpu_taxonomies[$req['taxonomy']]['female'])) {
+                if ($req['taxonomy'] == 'category' || $req['taxonomy'] == 'product_cat' || (is_array($wpu_taxonomies) && isset($wpu_taxonomies[$req['taxonomy']], $wpu_taxonomies[$req['taxonomy']]['female']) && $wpu_taxonomies[$req['taxonomy']]['female'])) {
                     $select_string = _x('Select a %s', 'female', 'wpuoptions');
                 }
                 $field_taxonomy_name = $req['taxonomy'];
