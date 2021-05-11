@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.0.2
+Version: 5.0.3
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.0.2',
+        'plugin_version' => '5.0.3',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -73,7 +73,6 @@ class WPUOptions {
     /**
      * Hooks
      */
-
     private function hooks() {
         add_action('plugins_loaded', array(&$this,
             'load_plugin_textdomain'
@@ -187,7 +186,7 @@ class WPUOptions {
     }
 
     public function admin_settings_redirect_server() {
-        $idtab = str_replace($this->options['plugin_pageslug'] . '-tab-', '', $_GET['page']);
+        $idtab = str_replace($this->options['plugin_pageslug'] . '-tab-', '', esc_html($_GET['page']));
         wp_redirect(admin_url($this->main_url . '&tab=' . $idtab));
         die;
     }
@@ -236,7 +235,7 @@ class WPUOptions {
             if (isset($field['multiple']) && $field['multiple']) {
                 $has_multiple = true;
             }
-            if (isset($field['type']) && $field['type'] == 'media') {
+            if (isset($field['type']) && ($field['type'] == 'media' || $field['type'] == 'file')) {
                 $has_media = true;
             }
             if (isset($field['type']) && $field['type'] == 'wp_link') {
