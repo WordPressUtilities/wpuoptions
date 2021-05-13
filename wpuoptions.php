@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.0.3
+Version: 5.1.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.0.3',
+        'plugin_version' => '5.1.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -495,6 +495,7 @@ class WPUOptions {
                 }
             }
             update_option('wpuoptions__last_updated', time());
+            do_action('wpuoptions__post_update', $testfields);
             if (!empty($updated_options)) {
                 $content .= '<div class="updated"><p><strong>' . __('Success!', 'wpuoptions') . '</strong><br />' . implode('<br />', $updated_options) . '</p></div>';
             }
@@ -636,6 +637,24 @@ class WPUOptions {
             }
 
             $field_required = isset($field['required']) && $field['required'];
+
+            /* Attributes */
+            if (!isset($field['attributes']) || !is_array($field['attributes'])) {
+                $field['attributes'] = array();
+            }
+            $pattern = '';
+            if ($field['type'] == 'datetime-local') {
+                $pattern = '[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}';
+            }
+            if (isset($field['pattern'])) {
+                $field['attributes']['pattern'] = $field['pattern'];
+            }
+
+            if (!empty($field['attributes'])) {
+                foreach ($field['attributes'] as $key => $var) {
+                    $idname .= ' ' . $key . '="' . esc_attr($var) . '"';
+                }
+            }
 
             $placeholder = '';
             if (isset($field['placeholder'])) {
@@ -850,6 +869,7 @@ class WPUOptions {
             /* Multiple cases */
             case 'color':
             case 'date':
+            case 'datetime-local':
             case 'email':
             case 'number':
             case 'url':
@@ -959,6 +979,10 @@ class WPUOptions {
      * @return boolean
      */
     private function test_field_value($field, $value) {
+
+        if (!isset($field['test'])) {
+            $field['test'] = false;
+        }
 
         $return = true;
         switch ($field['test']) {
