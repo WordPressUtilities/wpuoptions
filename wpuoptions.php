@@ -697,10 +697,10 @@ class WPUOptions {
                 if (!empty($originalvalue)) {
                     $content .= '<div class="wpuoptions-view-editor-switch">';
                     $content .= '<div class="original-view"><div class="original">' . apply_filters('the_content', $originalvalue) . '</div><a class="edit-link button button-small" href="#" role="button">' . __('Edit this text', 'wpuoptions') . '</a>' . '</div>';
-                    $content .= '<div class="editor-view">' . $content_editor . '<a class="edit-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' . '</div>';
+                    $content .= '<div class="editor-view" data-id-editor="' . $idf . '" data-original-value="' . esc_attr(str_replace("\n", '<br />', $originalvalue)) . '">' . $content_editor . '<a class="edit-link cancel-link button button-small" href="#" role="button">' . __('Cancel edition', 'wpuoptions') . '</a>' . '</div>';
                     $content .= '</div>';
                 } else {
-                    $content .= $content_editor;
+                    $content .= '<div class="wpuoptions-view-editor-wrapper">' . $content_editor . '</div>';
                 }
                 break;
             case 'file':

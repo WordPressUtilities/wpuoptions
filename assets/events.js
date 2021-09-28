@@ -107,7 +107,13 @@ var wputh_options_set_polyfills = function(form) {
 var wputh_options_set_editor = function() {
     jQuery('.wpuoptions-view-editor-switch').on('click', '.edit-link', function(e) {
         e.preventDefault();
-        jQuery(this).closest('.wpuoptions-view-editor-switch').find('.editor-view, .original-view').toggle();
+        var $this = jQuery(this),
+            $wrapper = $this.closest('.wpuoptions-view-editor-switch');
+        if ($this.hasClass('cancel-link')) {
+            var $editor = $wrapper.find('.editor-view');
+            tinymce.get($editor.attr('data-id-editor')).setContent($editor.attr('data-original-value'));
+        }
+        $wrapper.find('.editor-view, .original-view').toggle();
     });
 };
 
