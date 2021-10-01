@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.2.1
+Version: 5.2.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.2.1',
+        'plugin_version' => '5.2.2',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -496,6 +496,7 @@ class WPUOptions {
             }
             update_option('wpuoptions__last_updated', time());
             do_action('wpuoptions__post_update', $testfields);
+            wp_cache_delete('alloptions', 'options');
             if (!empty($updated_options)) {
                 $content .= '<div class="updated"><p><strong>' . __('Success!', 'wpuoptions') . '</strong><br />' . implode('<br />', $updated_options) . '</p></div>';
             }
