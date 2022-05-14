@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.2.5
+Version: 5.2.6
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.2.5',
+        'plugin_version' => '5.2.6',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -1148,7 +1148,7 @@ function wputh_l18n_get_option($name, $lang = false) {
     $default_language = apply_filters('wputh_l18n_get_option__defaultlang', $default_language);
 
     $use_default = apply_filters('wputh_l18n_get_option__usedefaultlang', true);
-    if (empty($option) && $use_default && $lang != $default_language) {
+    if (empty($option) && $use_default && $default_language && $lang != $default_language) {
         return wputh_l18n_get_option($name, $default_language);
     }
 
