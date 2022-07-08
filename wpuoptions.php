@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.2.6
+Version: 5.2.7
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.2.6',
+        'plugin_version' => '5.2.7',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -571,6 +571,12 @@ class WPUOptions {
         $content .= '<ul><li>' . get_submit_button(__('Update', 'wpuoptions'), 'primary', 'wpuoptions_submit') . '</li></ul>';
         $content .= wp_nonce_field('wpuoptions-nonceaction', 'wpuoptions-noncefield', 1, 0);
         $content = '<form action="" method="post" class="wpu-options-form ' . ($has_lang ? 'has-lang' : '') . '">' . $content . '</form>';
+
+        $current_admin_language = $this->get_current_admin_language();
+        if ($current_admin_language) {
+            echo '<script>window.wpuoptions_current_admin_language="' . esc_attr($current_admin_language) . '";</script>';
+        }
+
         return $content;
     }
 
@@ -1091,6 +1097,21 @@ class WPUOptions {
         }
 
         return $languages;
+    }
+
+    public function get_current_admin_language() {
+        global $polylang;
+        $current_language = false;
+
+        // Obtaining from Polylang
+        if (function_exists('pll_the_languages') && is_object($polylang)) {
+            $current_language_tmp = $polylang->pref_lang->slug;
+            if ($current_language_tmp != 'all') {
+                $current_language = $current_language_tmp;
+            }
+        }
+
+        return $current_language;
     }
 }
 

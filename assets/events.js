@@ -271,6 +271,11 @@ var wputh_options_set_langs = function() {
     });
 
     $langs.eq(0).trigger('click');
+
+    var current_lang = window.wpuoptions_current_admin_language;
+    if (current_lang) {
+        $langs.filter('[data-lang=' + current_lang + ']').trigger('click');
+    }
 };
 
 /* ----------------------------------------------------------
