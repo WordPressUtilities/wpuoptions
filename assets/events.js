@@ -193,8 +193,16 @@ var wputh_options_set_media = function() {
                 previewContent = '<div class="wpu-options-upload-preview"><span class="x">&times;</span>';
 
             var att = false;
-            if (attachment.sizes && attachment.sizes.medium) {
-                att = attachment.sizes.medium.url;
+            if (attachment.sizes) {
+                if (attachment.sizes.thumbnail) {
+                    att = attachment.sizes.thumbnail.url;
+                }
+                if (attachment.sizes.full) {
+                    att = attachment.sizes.full.url;
+                }
+                if (attachment.sizes.medium) {
+                    att = attachment.sizes.medium.url;
+                }
             }
             if (!att) {
                 att = attachment.url;
