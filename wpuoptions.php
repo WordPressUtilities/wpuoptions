@@ -3,7 +3,7 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.2.8
+Version: 5.3.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -17,7 +17,7 @@ class WPUOptions {
 
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.2.8',
+        'plugin_version' => '5.3.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -103,7 +103,8 @@ class WPUOptions {
         foreach ($this->fields as $id => $field) {
 
             /* Default value */
-            $this->fields[$id] = $this->get_field_datas($id, $field);
+            $field = $this->get_field_datas($id, $field);
+            $this->fields[$id] = $field;
 
             /* Load box details */
             if (isset($this->boxes[$this->fields[$id]['box']])) {
@@ -119,7 +120,7 @@ class WPUOptions {
                 if (isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
                     $default_value = $field['default_value'];
                 }
-                update_option($id, $default_value);
+                update_option($id, $default_value, $field['autoload']);
             }
         }
     }
@@ -486,7 +487,7 @@ class WPUOptions {
                     // If test is ok OR the field is not required
                     elseif ($test_field || ($new_option == '' && !isset($field['required']))) {
                         if ($old_option != $new_option) {
-                            update_option($id, $new_option);
+                            update_option($id, $new_option, $field['autoload']);
                             $updated_options[] = sprintf(__('The field "%s" has been updated.', 'wpuoptions'), $field_label);
                         }
                     } else {
@@ -621,7 +622,7 @@ class WPUOptions {
             $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
             if ($originalvalue === false && isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
                 $originalvalue = $field['default_value'];
-                update_option($field_version['prefix_opt'] . $field_version['id'], $field['default_value']);
+                update_option($field_version['prefix_opt'] . $field_version['id'], $field['default_value'], $field['autoload']);
             }
             if (!isset($field['editoroptions']) || !is_array($field['editoroptions'])) {
                 $field['editoroptions'] = array();
@@ -905,6 +906,7 @@ class WPUOptions {
     private function get_field_datas($id, $field) {
 
         $default_values = array(
+            'autoload' => true,
             'box' => 'default',
             'label' => $id,
             'label_check' => '',
@@ -917,7 +919,7 @@ class WPUOptions {
             )
         );
         foreach ($default_values as $name => $value) {
-            if (empty($field[$name]) || !isset($field[$name])) {
+            if (!is_bool($value) && empty($field[$name]) || !isset($field[$name])) {
                 $field[$name] = $value;
             }
         }
