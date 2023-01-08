@@ -40,7 +40,7 @@ var wputh_options_set_wp_link = function() {
             /* Set values */
             var src_json = {};
             try {
-                src_json = JSON.parse(response);
+                src_json = JSON.parse($textarea.val());
             }
             catch (e) {}
             if (typeof src_json == 'object') {
