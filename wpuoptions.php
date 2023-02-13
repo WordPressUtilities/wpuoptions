@@ -3,7 +3,8 @@
 /*
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.3.1
+Update URI: https://github.com/WordPressUtilities/wpuoptions
+Version: 5.4.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
@@ -15,9 +16,11 @@ defined('ABSPATH') or die(':(');
 
 class WPUOptions {
 
+    private $plugin_description;
+    private $settings_update;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.3.1',
+        'plugin_version' => '5.4.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -59,7 +62,11 @@ class WPUOptions {
     }
 
     public function load_plugin_textdomain() {
-        load_plugin_textdomain('wpuoptions', false, dirname(plugin_basename(__FILE__)) . '/lang/');
+        $lang_dir = dirname(plugin_basename(__FILE__)) . '/lang/';
+        if (!load_plugin_textdomain('wpuoptions', false, $lang_dir)) {
+            load_muplugin_textdomain('wpuoptions', $lang_dir);
+        }
+        $this->plugin_description = __('Friendly interface for website options', 'wpuoptions');
     }
 
     /**
