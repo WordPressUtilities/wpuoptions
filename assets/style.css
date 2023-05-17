@@ -107,7 +107,7 @@
     width: 100%!important;
 }
 
-@media(max-width:782px) {
+@media (max-width:782px) {
     .wpu-options-form__table,
     .wpu-options-form__table tbody,
     .wpu-options-form__table tr,
@@ -195,6 +195,10 @@
 
 .wpuoptions-view-editor-switch .editor-view {
     display: none;
+}
+
+.wpuoptions-view-editor-switch .original img {
+    max-width: 100%;
 }
 
 /* ----------------------------------------------------------
