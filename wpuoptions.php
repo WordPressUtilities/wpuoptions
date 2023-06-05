@@ -4,10 +4,14 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.4.2
+Version: 5.5.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: http://darklg.me/
+Text Domain: wpuoptions
+Domain Path: /lang
+Requires at least: 6.0
+Requires PHP: 8.0
 License: MIT License
 License URI: http://opensource.org/licenses/MIT
 */
@@ -24,7 +28,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.4.2',
+        'plugin_version' => '5.5.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -390,7 +394,7 @@ class WPUOptions {
                     $box['tab'] = 'default';
                 }
                 if ($box['tab'] == $tab_id && isset($boxes_with_fields[$box_id])) {
-                    echo '<p><label><input class="wpu-export-boxes-check" type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name']) ? __('Default box', 'wpuoptions') : $box['name']) . '</label></p>';
+                    echo '<p><label><input class="wpu-export-boxes-check" type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name'])?__('Default box', 'wpuoptions'): $box['name']) . '</label></p>';
                 }
             }
             echo '</div>';
@@ -554,7 +558,7 @@ class WPUOptions {
 
         foreach ($this->boxes as $idbox => $box) {
             $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
-            $box_usercan = isset($box['current_user_can']) ? current_user_can($box['current_user_can']) : true;
+            $box_usercan = isset($box['current_user_can'])?current_user_can($box['current_user_can']): true;
             if ($box_tab != $this->current_tab || !$box_usercan) {
                 continue;
             }
@@ -1117,7 +1121,7 @@ class WPUOptions {
         $current_language = false;
 
         // Obtaining from Polylang
-        if (function_exists('pll_the_languages') && is_object($polylang)) {
+        if (function_exists('pll_the_languages') && is_object($polylang) && !is_null($polylang->pref_lang)) {
             $current_language_tmp = $polylang->pref_lang->slug;
             if ($current_language_tmp != 'all') {
                 $current_language = $current_language_tmp;
