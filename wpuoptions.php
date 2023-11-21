@@ -4,16 +4,16 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 5.5.0
+Version: 6.0.0
 Description: Friendly interface for website options
 Author: Darklg
-Author URI: http://darklg.me/
+Author URI: https://darklg.me/
 Text Domain: wpuoptions
 Domain Path: /lang
 Requires at least: 6.0
 Requires PHP: 8.0
 License: MIT License
-License URI: http://opensource.org/licenses/MIT
+License URI: https://opensource.org/licenses/MIT
 */
 
 defined('ABSPATH') or die(':(');
@@ -28,7 +28,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '5.5.0',
+        'plugin_version' => '6.0.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -54,7 +54,7 @@ class WPUOptions {
      */
     public function __construct() {
 
-        include dirname(__FILE__) . '/inc/WPUBaseUpdate/WPUBaseUpdate.php';
+        require_once dirname(__FILE__) . '/inc/WPUBaseUpdate/WPUBaseUpdate.php';
         $this->settings_update = new \wpuoptions\WPUBaseUpdate(
             'WordPressUtilities',
             'wpuoptions',
@@ -394,7 +394,7 @@ class WPUOptions {
                     $box['tab'] = 'default';
                 }
                 if ($box['tab'] == $tab_id && isset($boxes_with_fields[$box_id])) {
-                    echo '<p><label><input class="wpu-export-boxes-check" type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name'])?__('Default box', 'wpuoptions'): $box['name']) . '</label></p>';
+                    echo '<p><label><input class="wpu-export-boxes-check" type="checkbox" checked="checked" name="boxes[' . $box_id . ']" value="' . $box_id . '" /> ' . (empty($box['name']) ? __('Default box', 'wpuoptions') : $box['name']) . '</label></p>';
                 }
             }
             echo '</div>';
@@ -558,7 +558,7 @@ class WPUOptions {
 
         foreach ($this->boxes as $idbox => $box) {
             $box_tab = isset($box['tab']) ? $box['tab'] : 'default';
-            $box_usercan = isset($box['current_user_can'])?current_user_can($box['current_user_can']): true;
+            $box_usercan = isset($box['current_user_can']) ? current_user_can($box['current_user_can']) : true;
             if ($box_tab != $this->current_tab || !$box_usercan) {
                 continue;
             }
@@ -628,12 +628,17 @@ class WPUOptions {
         $upload_dir = wp_upload_dir();
         $wpu_posttypes = apply_filters('wputh_get_posttypes', array());
         $wpu_taxonomies = apply_filters('wputh_get_taxonomies', array());
+        $main_value = get_option($id);
+
         foreach ($fields_versions as $field_version) {
             $idf = $this->get_field_id($field_version['prefix_opt'] . $field_version['id']);
             $field = $this->get_field_datas($field_version['id'], $field_version['field']);
             $is_multiple = isset($field['multiple']) && $field['multiple'];
             $idname = ' id="' . $idf . '" name="' . $idf . ($is_multiple ? '[]' : '') . '" ';
             $originalvalue = get_option($field_version['prefix_opt'] . $field_version['id']);
+            if (!$originalvalue && $main_value) {
+                $originalvalue = $main_value;
+            }
             $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
             if ($originalvalue === false && isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
                 $originalvalue = $field['default_value'];

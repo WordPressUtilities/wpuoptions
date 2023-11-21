@@ -4,7 +4,7 @@ namespace wpuoptions;
 /*
 Class Name: WPU Base Update
 Description: A class to handle plugin update from github
-Version: 0.4.3
+Version: 0.4.4
 Class URI: https://github.com/WordPressUtilities/wpubaseplugin
 Author: Darklg
 Author URI: https://darklg.me/
@@ -126,6 +126,9 @@ class WPUBaseUpdate {
             /* Fetch plugin data */
             $plugin_data = array();
             if (file_exists($this->plugin_dir)) {
+                if (!function_exists('get_plugin_data')) {
+                    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+                }
                 $plugin_data = get_plugin_data($this->plugin_dir);
             }
 

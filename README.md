@@ -1,6 +1,8 @@
 Options
 =================
 
+[![JS workflow](https://github.com/WordPressUtilities/wpuoptions/actions/workflows/js.yml/badge.svg 'JS workflow')](https://github.com/WordPressUtilities/wpuoptions/actions) [![PHP workflow](https://github.com/WordPressUtilities/wpuoptions/actions/workflows/php.yml/badge.svg 'PHP workflow')](https://github.com/WordPressUtilities/wpuoptions/actions)
+
 Friendly interface for website options.
 
 How to install :

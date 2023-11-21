@@ -1,0 +1,21 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "no-prototype-builtins": 0
+    },
+    "globals": {
+        "wp": true,
+        "tinymce": true,
+        "wpuoptions__settings": true,
+        "wpLink": true,
+        "jQuery": true
+    },
+    "ignorePatterns": ["assets/select2/**"]
+}

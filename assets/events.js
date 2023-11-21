@@ -1,4 +1,5 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function() {
+    'use strict';
     var form = jQuery('.wpu-options-form');
     wputh_options_set_exportcheck();
     wputh_options_set_media();
@@ -15,6 +16,7 @@ jQuery(document).ready(function($) {
 ---------------------------------------------------------- */
 
 var wputh_options_set_exportcheck = function() {
+    'use strict';
     jQuery('.wpu-export-section').on('change', '.wpu-export-title-checkbox', function() {
         var $this = jQuery(this),
             $parent = $this.closest('.wpu-export-section');
@@ -27,6 +29,7 @@ var wputh_options_set_exportcheck = function() {
 ---------------------------------------------------------- */
 
 var wputh_options_set_wp_link = function() {
+    'use strict';
     jQuery('[data-wpuoptions-wplink]').each(function() {
         var $this = jQuery(this),
             $parent = $this.parent(),
@@ -42,7 +45,7 @@ var wputh_options_set_wp_link = function() {
             try {
                 src_json = JSON.parse($textarea.val());
             }
-            catch (e) {}
+            catch (e) {console.log('Could not parse');}
             if (typeof src_json == 'object') {
                 if (src_json.href) {
                     jQuery('#wp-link-url').val(src_json.href);
@@ -78,10 +81,11 @@ var wputh_options_set_wp_link = function() {
 ---------------------------------------------------------- */
 
 var wputh_options_set_multiple_selects = function() {
+    'use strict';
     if (!jQuery.fn.select2) {
         return;
     }
-    $('.wpu-options-box select[multiple]').select2();
+    jQuery('.wpu-options-box select[multiple]').select2();
 };
 
 /* ----------------------------------------------------------
@@ -89,6 +93,7 @@ var wputh_options_set_multiple_selects = function() {
 ---------------------------------------------------------- */
 
 var wputh_options_set_polyfills = function(form) {
+    'use strict';
     form.find('input[type=date]').each(function() {
         jQuery(this).attr('type', 'text').datepicker({
             dateFormat: 'dd/mm/yy'
@@ -105,6 +110,7 @@ var wputh_options_set_polyfills = function(form) {
 ---------------------------------------------------------- */
 
 var wputh_options_set_editor = function() {
+    'use strict';
     jQuery('.wpuoptions-view-editor-switch').on('click', '.edit-link', function(e) {
         e.preventDefault();
         var $this = jQuery(this),
@@ -125,9 +131,10 @@ var wpuopt_file_frame,
     wpuopt_datafor;
 
 var wputh_options_set_media = function() {
-    var options_form = jQuery('.wpu-options-form');
+    var wpuopt_options_form = jQuery('.wpu-options-form');
     // Remove media
-    options_form.on('click', '.wpu-options-upload-preview .x', function(event) {
+    wpuopt_options_form.on('click', '.wpu-options-upload-preview .x', function(event) {
+        'use strict';
         event.preventDefault();
         var $this = jQuery(this),
             $td = $this.closest('td'),
@@ -150,7 +157,8 @@ var wputh_options_set_media = function() {
         $td.find('.wpuoptions_add_media').text(defaultLabel);
     });
     // Add media
-    options_form.on('click', '.wpuoptions_add_media', function(event) {
+    wpuopt_options_form.on('click', '.wpuoptions_add_media', function(event) {
+        'use strict';
         event.preventDefault();
         var $this = jQuery(this);
 
@@ -235,6 +243,7 @@ var wputh_options_set_media = function() {
 ---------------------------------------------------------- */
 
 var wputh_options_set_accordion = function() {
+    'use strict';
     var form = jQuery('.wpu-options-form'),
         boxes = form.find('.wpu-options-form__box');
 
@@ -264,6 +273,7 @@ var wputh_options_set_accordion = function() {
 ---------------------------------------------------------- */
 
 var wputh_options_set_langs = function() {
+    'use strict';
     var $form = jQuery('.wpu-options-form'),
         $boxes = $form.find('.wpu-options-box[data-lang]'),
         $langs = jQuery('.wpu-options-lang-switcher').find('a[data-lang]');
@@ -290,8 +300,8 @@ var wputh_options_set_langs = function() {
   Heartbeat
 ---------------------------------------------------------- */
 
-jQuery(document).ready(function($) {
-
+jQuery(document).ready(function() {
+    'use strict';
     var $body = jQuery('body'),
         $document = jQuery(document),
         $form = jQuery('.wpu-options-form'),
