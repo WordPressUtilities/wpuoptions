@@ -4,13 +4,13 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 6.0.0
+Version: 6.0.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
 Text Domain: wpuoptions
 Domain Path: /lang
-Requires at least: 6.0
+Requires at least: 6.2
 Requires PHP: 8.0
 License: MIT License
 License URI: https://opensource.org/licenses/MIT
@@ -28,7 +28,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '6.0.0',
+        'plugin_version' => '6.0.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -54,7 +54,7 @@ class WPUOptions {
      */
     public function __construct() {
 
-        require_once dirname(__FILE__) . '/inc/WPUBaseUpdate/WPUBaseUpdate.php';
+        require_once __DIR__ . '/inc/WPUBaseUpdate/WPUBaseUpdate.php';
         $this->settings_update = new \wpuoptions\WPUBaseUpdate(
             'WordPressUtilities',
             'wpuoptions',
