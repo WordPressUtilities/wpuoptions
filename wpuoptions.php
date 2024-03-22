@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 6.0.1
+Version: 7.0.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -28,7 +28,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '6.0.1',
+        'plugin_version' => '7.0.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -45,6 +45,8 @@ class WPUOptions {
 
     private $default_tab = array(
         'default' => array(
+            'visibility_admin' => true,
+            'visibility_network' => true,
             'name' => 'Site options'
         )
     );
@@ -95,6 +97,18 @@ class WPUOptions {
         add_action('init', array(&$this,
             'set_fields'
         ), 50);
+
+        /* Multisite */
+        add_filter('network_edit_site_nav_links', array(&$this,
+            'network_edit_site_nav_links'
+        ));
+        add_action('network_admin_menu', array(&$this,
+            'network_admin_menu'
+        ));
+        add_action('current_screen', array(&$this,
+            'check_screen_access'
+        ));
+
     }
 
     /**
@@ -106,6 +120,18 @@ class WPUOptions {
         $this->boxes = apply_filters('wpu_options_boxes', $this->default_box);
         $this->tabs = apply_filters('wpu_options_tabs', $this->default_tab);
         $this->current_tab = isset($_GET['tab']) && array_key_exists($_GET['tab'], $this->tabs) ? $_GET['tab'] : 'default';
+
+        foreach ($this->tabs as $id => $tab) {
+            if (!isset($this->tabs[$id]['name'])) {
+                $this->tabs[$id]['name'] = $id;
+            }
+            if (!isset($this->tabs[$id]['visibility_network'])) {
+                $this->tabs[$id]['visibility_network'] = false;
+            }
+            if (!isset($this->tabs[$id]['visibility_admin'])) {
+                $this->tabs[$id]['visibility_admin'] = true;
+            }
+        }
 
         /* Default values */
         foreach ($this->boxes as $id => $box) {
@@ -119,6 +145,10 @@ class WPUOptions {
 
             /* Default value */
             $field = $this->get_field_datas($id, $field);
+            if (!$this->is_item_visible($field)) {
+                continue;
+            }
+
             $this->fields[$id] = $field;
 
             /* Load box details */
@@ -130,12 +160,15 @@ class WPUOptions {
 
             /* Default value */
             $default_value = '';
-            $opt = get_option($id);
-            if ($opt === false && !isset($field['noautoload'])) {
-                if (isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
-                    $default_value = $field['default_value'];
+
+            if (!is_network_admin()) {
+                $opt = get_option($id);
+                if ($opt === false && !isset($field['noautoload'])) {
+                    if (isset($field['default_value']) && $this->test_field_value($field, $field['default_value'])) {
+                        $default_value = $field['default_value'];
+                    }
+                    update_option($id, $default_value, $field['autoload']);
                 }
-                update_option($id, $default_value, $field['autoload']);
             }
         }
     }
@@ -168,12 +201,20 @@ class WPUOptions {
             add_filter('teeny_mce_buttons', array(&$this,
                 'custom_editor_buttons'
             ), 10, 2);
+
+            if (is_network_admin()) {
+                switch_to_blog($this->get_current_site_id());
+            }
             add_action('admin_enqueue_scripts', array(&$this,
                 'add_assets_js'
             ));
             add_action('admin_print_styles', array(&$this,
                 'add_assets_css'
             ));
+
+            if (is_network_admin()) {
+                restore_current_blog();
+            }
         }
     }
 
@@ -449,6 +490,11 @@ class WPUOptions {
         if (!isset($_POST['wpuoptions_submit'])) {
             return;
         }
+
+        if (is_network_admin()) {
+            switch_to_blog($this->get_current_site_id());
+        }
+
         if (!wp_verify_nonce($_POST['wpuoptions-noncefield'], 'wpuoptions-nonceaction')) {
             $content .= '<p>' . __("Error in the form.", 'wpuoptions') . '</p>';
         } else {
@@ -457,6 +503,10 @@ class WPUOptions {
             $errors = array();
             $testfields = array();
             foreach ($this->fields as $id => $field) {
+                $field = $this->get_field_datas($id, $field);
+                if (!$this->is_item_visible($field)) {
+                    continue;
+                }
                 $testfields[$id] = $field;
                 if (isset($field['lang']) && !empty($languages)) {
                     foreach ($languages as $lang => $name) {
@@ -520,6 +570,10 @@ class WPUOptions {
                 $content .= '<div class="error"><p><strong>' . __('Fail!', 'wpuoptions') . '</strong><br />' . implode('<br />', $errors) . '</p></div>';
             }
         }
+
+        if (is_network_admin()) {
+            restore_current_blog();
+        }
         $this->fields_messages = $content;
     }
 
@@ -537,12 +591,19 @@ class WPUOptions {
             $content .= '<div id="icon-themes" class="icon32"><br></div>';
             $content .= '<h2 class="nav-tab-wrapper">';
             foreach ($this->tabs as $idtab => $tab) {
+                if (!$this->is_item_visible($tab)) {
+                    continue;
+                }
                 $current_class = ($this->current_tab == $idtab ? 'nav-tab-active' : '');
                 $tab_url = '';
                 if ($idtab != 'default') {
                     $tab_url = '&tab=' . $idtab;
                 }
-                $content .= '<a class="nav-tab ' . $current_class . '" href="' . admin_url($this->main_url . $tab_url) . '">' . $tab['name'] . '</a>';
+                $main_tab_url = admin_url($this->main_url . $tab_url);
+                if (is_network_admin()) {
+                    $main_tab_url = network_admin_url('sites.php?page=wpuoptions-settings&id=' . $this->get_current_site_id() . $tab_url);
+                }
+                $content .= '<a class="nav-tab ' . $current_class . '" href="' . $main_tab_url . '">' . $tab['name'] . '</a>';
             }
             $content .= '</h2><br />';
         }
@@ -633,6 +694,9 @@ class WPUOptions {
         foreach ($fields_versions as $field_version) {
             $idf = $this->get_field_id($field_version['prefix_opt'] . $field_version['id']);
             $field = $this->get_field_datas($field_version['id'], $field_version['field']);
+            if (!$this->is_item_visible($field)) {
+                continue;
+            }
             $is_multiple = isset($field['multiple']) && $field['multiple'];
             $idname = ' id="' . $idf . '" name="' . $idf . ($is_multiple ? '[]' : '') . '" ';
             $originalvalue = get_option($field_version['prefix_opt'] . $field_version['id']);
@@ -931,6 +995,8 @@ class WPUOptions {
             'label' => $id,
             'label_check' => '',
             'type' => 'text',
+            'visibility_network' => false,
+            'visibility_admin' => true,
             'multiple' => false,
             'test' => '',
             'datas' => array(
@@ -1135,6 +1201,114 @@ class WPUOptions {
 
         return $current_language;
     }
+
+    /* ----------------------------------------------------------
+      Multisite
+    ---------------------------------------------------------- */
+
+    /**
+     * Handle Tabs in multisite settings
+     */
+    function network_edit_site_nav_links($tabs) {
+        /* Hide settings tab */
+        unset($tabs['site-settings']);
+
+        /* Add new tab */
+        $tabs['site-wpuoptions'] = array(
+            'label' => 'WPU Options',
+            'url' => add_query_arg('page', 'wpuoptions-settings', 'sites.php'),
+            'cap' => 'manage_sites'
+        );
+        return $tabs;
+    }
+
+    /* Create new page */
+    function network_admin_menu() {
+        add_submenu_page('', $this->options['plugin_name'], $this->options['plugin_name'], 'manage_network_options', 'wpuoptions-settings', array(&$this,
+            'network_admin_page'
+        ));
+    }
+
+    /* Page content */
+    function network_admin_page() {
+        $id = $this->get_current_site_id();
+
+        global $title;
+        echo '<div class="wrap">';
+        echo '<h1 id="edit-site">' . esc_html($title) . '</h1>';
+
+        network_edit_site_nav(
+            array(
+                'blog_id' => $id,
+                'selected' => 'site-wpuoptions'
+            )
+        );
+
+        switch_to_blog($id);
+        if (!empty($this->fields)) {
+            echo $this->fields_messages;
+            echo $this->admin_form();
+        } else {
+            echo '<p>' . __('No fields for the moment', 'wpuoptions') . '</p>';
+        }
+        restore_current_blog();
+
+        echo '</div>';
+    }
+
+    function check_screen_access() {
+        if (!$this->is_network_wputools_admin()) {
+            return;
+        }
+
+        /* Set global options */
+        global $title;
+        $blog_details = get_blog_details(array(
+            'blog_id' => $this->get_current_site_id()
+        ));
+        $title = __('Edit Site:') . ' ' . $blog_details->blogname;
+    }
+
+    function is_network_wputools_admin() {
+        if (!function_exists('get_current_screen')) {
+            return false;
+        }
+        $screen = get_current_screen();
+        if ('sites_page_wpuoptions-settings-network' !== $screen->id) {
+            return false;
+        }
+        return true;
+    }
+
+    function get_current_site_id($id = false) {
+
+        if (!$id) {
+            $id = isset($_REQUEST['id']) ? absint($_REQUEST['id']) : 0;
+        }
+
+        if (!$id) {
+            wp_die(__('Incorrect site ID.'));
+        }
+
+        if (!get_site($id)) {
+            wp_die(__('The requested site does not exist.'));
+        }
+
+        return $id;
+
+    }
+
+    function is_item_visible($item) {
+        if (is_network_admin() && !$item['visibility_network']) {
+            return false;
+        }
+        if (!is_network_admin() && is_admin() && !$item['visibility_admin']) {
+            return false;
+        }
+        return true;
+
+    }
+
 }
 
 $WPUOptions = new WPUOptions();

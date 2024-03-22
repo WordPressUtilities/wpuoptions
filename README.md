@@ -22,7 +22,14 @@ Put the code below in your theme's functions.php file.
 add_filter( 'wpu_options_tabs', function ( $tabs ) {
     $tabs['special_tab'] = array(
         'name' => 'Special tab',
-        'sidebar' => true // Load in sidebar
+        /* Load in sidebar */
+        'sidebar' => true
+    );
+    /* Only in multisite options */
+    $tabs['multisite_tab'] = array(
+        'name' => 'Multisite tab',
+        'visibility_admin' => false,
+        'visibility_network' => true,
     );
     return $tabs;
 }, 10, 1 );
@@ -39,10 +46,19 @@ add_filter( 'wpu_options_boxes', function ( $boxes ) {
 
 /* Fields */
 add_filter( 'wpu_options_fields', function ( $options ) {
+    /* Default field */
     $options['special_field'] = array(
         'label' => 'Special field',
         'box' => 'special_box',
         'type' => 'email'
+    );
+    /* Only in multisite options */
+    $options['multisite_field'] = array(
+        'label' => 'Special field',
+        'box' => 'special_box',
+        'type' => 'email',
+        'visibility_admin' => false,
+        'visibility_network' => true,
     );
     return $options;
 }, 10, 1 );
