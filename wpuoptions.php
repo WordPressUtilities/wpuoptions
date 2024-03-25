@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 7.0.0
+Version: 7.1.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -28,7 +28,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '7.0.0',
+        'plugin_version' => '7.1.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -194,6 +194,9 @@ class WPUOptions {
         add_action('admin_bar_menu', array(&$this,
             'add_toolbar_menu_items'
         ), 100);
+        add_filter('ajax_query_attachments_args', array(&$this,
+            'ajax_query_attachments_args'
+        ));
         add_filter("plugin_action_links_" . plugin_basename(__FILE__), array(&$this,
             'settings_link'
         ));
@@ -1307,6 +1310,27 @@ class WPUOptions {
         }
         return true;
 
+    }
+
+    /* Handle attachments in multisite */
+    function ajax_query_attachments_args($args) {
+        /* Check if ajax query origin is in a network admin page */
+        $referer_url = wp_get_referer();
+        if (!$referer_url || strpos($referer_url, network_site_url()) === false) {
+            return $args;
+        }
+        $referer = parse_url($referer_url);
+        if (!is_array($referer) || !isset($referer['query'])) {
+            return $args;
+        }
+        parse_str($referer['query'], $params);
+        if (!isset($params['page'], $params['id']) || $params['page'] != 'wpuoptions-settings' || !ctype_digit($params['id'])) {
+            return $args;
+        }
+
+        /* Ensure correct blog is available  */
+        switch_to_blog($this->get_current_site_id($params['id']));
+        return $args;
     }
 
 }
