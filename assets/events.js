@@ -17,11 +17,20 @@ jQuery(document).ready(function() {
 
 var wputh_options_set_exportcheck = function() {
     'use strict';
-    jQuery('.wpu-export-section').on('change', '.wpu-export-title-checkbox', function() {
-        var $this = jQuery(this),
-            $parent = $this.closest('.wpu-export-section');
-        $parent.find('.wpu-export-boxes-check').prop("checked", $this.prop('checked'));
+    jQuery('.wpu-export-section').each(function() {
+        var $section = jQuery(this),
+            $masterCheck = $section.find('.wpu-export-title-checkbox'),
+            $checkboxes = $section.find('.wpu-export-boxes-check');
+
+        $masterCheck.on('change', function() {
+            $checkboxes.prop("checked", $masterCheck.prop('checked'));
+        });
+
+        $checkboxes.on('change', function() {
+            $masterCheck.prop("checked", $checkboxes.filter(':checked').length == $checkboxes.length);
+        });
     });
+
 };
 
 /* ----------------------------------------------------------
@@ -44,8 +53,9 @@ var wputh_options_set_wp_link = function() {
             var src_json = {};
             try {
                 src_json = JSON.parse($textarea.val());
+            } catch (e) {
+                console.log('Could not parse');
             }
-            catch (e) {console.log('Could not parse');}
             if (typeof src_json == 'object') {
                 if (src_json.href) {
                     jQuery('#wp-link-url').val(src_json.href);
@@ -216,8 +226,7 @@ var wputh_options_set_media = function() {
                 att = attachment.url;
                 att = att.replace($preview.data('removethis'), '');
                 previewContent += '<div class="wpu-options-upload-preview--file">' + att + '</div>';
-            }
-            else {
+            } else {
                 previewContent += '<img src="' + att + '" />';
             }
             previewContent += '</div>';
@@ -261,8 +270,7 @@ var wputh_options_set_accordion = function() {
     // Set opened box
     if (window.location.hash && jQuery(window.location.hash).length > 0) {
         jQuery(window.location.hash).trigger('click');
-    }
-    else {
+    } else {
         boxes.eq(0).removeClass('is-closed');
     }
 

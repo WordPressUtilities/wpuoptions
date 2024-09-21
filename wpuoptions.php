@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 7.1.0
+Version: 8.0.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -12,6 +12,7 @@ Text Domain: wpuoptions
 Domain Path: /lang
 Requires at least: 6.2
 Requires PHP: 8.0
+Network: Optional
 License: MIT License
 License URI: https://opensource.org/licenses/MIT
 */
@@ -28,7 +29,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '7.1.0',
+        'plugin_version' => '8.0.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -407,11 +408,8 @@ class WPUOptions {
 
         /* Return JSON file */
 
-        header('Content-disposition: attachment; filename=' . $filename);
-        header('Content-type: application/json');
         echo $this->generate_export($boxes);
 
-        die;
     }
 
     public function admin_export_page() {
@@ -1034,21 +1032,24 @@ class WPUOptions {
         // Array of fields:values
         foreach ($this->fields as $id => $field) {
             $opt_field = $field;
-
-            // If this field has i18n
-            if (isset($opt_field['lang']) && !empty($languages)) {
-                foreach ($languages as $lang => $name) {
-                    $options[$lang . '___' . $id] = get_option($lang . '___' . $id);
-                }
-            }
             if (!isset($opt_field['box']) || $opt_field['box'] == 'default' || empty($opt_field['box']) || !array_key_exists($opt_field['box'], $this->boxes)) {
                 $opt_field['box'] = 'default';
             }
             if ($import_all_boxes || in_array($opt_field['box'], $boxes)) {
                 $options[$id] = get_option($id);
+                // If this field has i18n
+                if (isset($opt_field['lang']) && !empty($languages)) {
+                    foreach ($languages as $lang => $name) {
+                        $options[$lang . '___' . $id] = get_option($lang . '___' . $id);
+                    }
+                }
             }
         }
-        return json_encode($options);
+
+        header('Content-disposition: attachment; filename=' . $filename);
+        header('Content-type: application/json');
+        echo json_encode($options);
+        die;
     }
 
     /**
@@ -1212,7 +1213,7 @@ class WPUOptions {
     /**
      * Handle Tabs in multisite settings
      */
-    function network_edit_site_nav_links($tabs) {
+    public function network_edit_site_nav_links($tabs) {
         /* Hide settings tab */
         unset($tabs['site-settings']);
 
@@ -1226,14 +1227,14 @@ class WPUOptions {
     }
 
     /* Create new page */
-    function network_admin_menu() {
+    public function network_admin_menu() {
         add_submenu_page('', $this->options['plugin_name'], $this->options['plugin_name'], 'manage_network_options', 'wpuoptions-settings', array(&$this,
             'network_admin_page'
         ));
     }
 
     /* Page content */
-    function network_admin_page() {
+    public function network_admin_page() {
         $id = $this->get_current_site_id();
 
         global $title;
@@ -1259,7 +1260,7 @@ class WPUOptions {
         echo '</div>';
     }
 
-    function check_screen_access() {
+    public function check_screen_access() {
         if (!$this->is_network_wputools_admin()) {
             return;
         }
@@ -1272,7 +1273,7 @@ class WPUOptions {
         $title = __('Edit Site:') . ' ' . $blog_details->blogname;
     }
 
-    function is_network_wputools_admin() {
+    public function is_network_wputools_admin() {
         if (!function_exists('get_current_screen')) {
             return false;
         }
@@ -1283,7 +1284,7 @@ class WPUOptions {
         return true;
     }
 
-    function get_current_site_id($id = false) {
+    public function get_current_site_id($id = false) {
 
         if (!$id) {
             $id = isset($_REQUEST['id']) ? absint($_REQUEST['id']) : 0;
@@ -1301,7 +1302,7 @@ class WPUOptions {
 
     }
 
-    function is_item_visible($item) {
+    public function is_item_visible($item) {
         if (is_network_admin() && !$item['visibility_network']) {
             return false;
         }
@@ -1313,7 +1314,7 @@ class WPUOptions {
     }
 
     /* Handle attachments in multisite */
-    function ajax_query_attachments_args($args) {
+    public function ajax_query_attachments_args($args) {
         /* Check if ajax query origin is in a network admin page */
         $referer_url = wp_get_referer();
         if (!$referer_url || strpos($referer_url, network_site_url()) === false) {

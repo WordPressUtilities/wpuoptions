@@ -8,7 +8,9 @@
         "ecmaVersion": "latest"
     },
     "rules": {
-        "no-prototype-builtins": 0
+        "no-prototype-builtins": 0,
+        "no-unused-vars": 1,
+        "no-undef": 1
     },
     "globals": {
         "wp": true,
