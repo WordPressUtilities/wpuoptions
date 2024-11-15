@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 8.0.0
+Version: 8.0.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -29,7 +29,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '8.0.0',
+        'plugin_version' => '8.0.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -701,7 +701,7 @@ class WPUOptions {
             $is_multiple = isset($field['multiple']) && $field['multiple'];
             $idname = ' id="' . $idf . '" name="' . $idf . ($is_multiple ? '[]' : '') . '" ';
             $originalvalue = get_option($field_version['prefix_opt'] . $field_version['id']);
-            if (!$originalvalue && $main_value) {
+            if (!$originalvalue && $originalvalue !== '' && $main_value) {
                 $originalvalue = $main_value;
             }
             $field_post_type = isset($field['post_type']) ? $field['post_type'] : 'post';
