@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 8.0.4
+Version: 8.0.5
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -29,7 +29,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '8.0.4',
+        'plugin_version' => '8.0.5',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -920,7 +920,7 @@ class WPUOptions {
                 foreach ($wpq_post_type as $key => $wpq_post_title) {
                     $selected = ($key == $value) || (is_array($value) && in_array($key, $value));
                     $content .= '<option value="' . htmlentities($key) . '" ' . ($selected ? 'selected="selected"' : '') . '>';
-                    $content .= esc_html(strip_tags($wpq_post_title)) . ' - #' . $key;
+                    $content .= esc_html(wp_strip_all_tags($wpq_post_title)) . ' - #' . $key;
                     $content .= '</option>';
                 }
                 $content .= '</select>';
@@ -1147,8 +1147,17 @@ class WPUOptions {
             if (!isset($field['type'], $field['editorbuttons']) || $field['type'] != 'editor' || empty($field['editorbuttons']) || !is_array($field['editorbuttons'])) {
                 continue;
             }
-            $field_id = $this->get_field_id($id);
-            if ($field_id != $editor_id) {
+            $field_ids = array(
+                $this->get_field_id($id)
+            );
+            if (isset($field['lang'])) {
+                $languages = $this->get_languages();
+                foreach ($languages as $lang => $name) {
+                    $field_ids[] = $this->get_field_id($lang . '___' . $id);
+                }
+            }
+
+            if (!in_array($editor_id, $field_ids)) {
                 continue;
             }
             return $field['editorbuttons'];
