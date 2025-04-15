@@ -528,6 +528,7 @@
     margin-top: 0;
 }
 
+.wpuoptions-type-link:not([data-wpuoptions-haslink="1"]) .delete-link,
 .wpuoptions-type-link .link-preview:empty {
     display: none;
 }

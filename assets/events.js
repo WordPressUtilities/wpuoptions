@@ -39,9 +39,34 @@ var wputh_options_set_exportcheck = function() {
 
 var wputh_options_set_wp_link = function() {
     'use strict';
+
+    jQuery('[data-wpuoptions-wplinkpurge]').each(function() {
+        var $this = jQuery(this),
+            $parent = $this.parent(),
+            $preview = $parent.find('.link-preview'),
+            $button_add = $parent.find('[data-wpuoptions-wplink]'),
+            $textarea = $parent.find('textarea');
+
+        $this.click(function() {
+            /* Remove link */
+            $textarea.val("");
+
+            /* Reset link */
+            $parent.attr('data-wpuoptions-haslink', 0);
+
+            /* Change label */
+            $button_add.html($button_add.attr('data-label-add-link'));
+
+            /* Update preview */
+            $preview.html('');
+        });
+    });
+
+
     jQuery('[data-wpuoptions-wplink]').each(function() {
         var $this = jQuery(this),
             $parent = $this.parent(),
+            $button_add = $parent.find('[data-wpuoptions-wplink]'),
             $preview = $parent.find('.link-preview'),
             $textarea = $parent.find('textarea');
 
@@ -74,6 +99,12 @@ var wputh_options_set_wp_link = function() {
                 var attrs = wpLink.getAttrs();
                 attrs.text = jQuery('#wp-link-text').val();
                 $textarea.val(JSON.stringify(attrs));
+
+                /* Set link */
+                $parent.attr('data-wpuoptions-haslink', 1);
+
+                /* Change label */
+                $button_add.html($button_add.attr('data-label-edit-link'));
 
                 /* Update preview */
                 var $a = document.createElement('a');

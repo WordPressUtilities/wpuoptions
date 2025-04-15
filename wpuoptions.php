@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 8.0.5
+Version: 8.1.0
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -29,7 +29,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '8.0.5',
+        'plugin_version' => '8.1.0',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -955,10 +955,13 @@ class WPUOptions {
                         $html_preview = '<a onclick="return false;" href="' . esc_url($json_preview->href) . '">' . htmlentities($json_preview->text) . '</a>';
                     }
                 }
-                $content .= '<div class="wpuoptions-type-link">';
+                $content .= '<div class="wpuoptions-type-link" ' . ($html_preview ? ' data-wpuoptions-haslink="1"' : '') . '>';
                 $content .= '<p class="link-preview">' . $html_preview . '</p>';
                 $content .= '<textarea ' . $placeholder . ' ' . $idname . ' rows="5" cols="30">' . $value . '</textarea>';
-                $content .= '<button class="button button-small" data-wpuoptions-wplink="1" class="link-button" type="button">' . __('Edit link', 'wpuoptions') . '</button>';
+                $add_link_label = __('Add a link', 'wpuoptions');
+                $edit_link_label = __('Edit link', 'wpuoptions');
+                $content .= '<button data-label-edit-link="' . esc_attr($edit_link_label) . '" data-label-add-link="' . esc_attr($add_link_label) . '" class="button button-small" data-wpuoptions-wplink="1" class="link-button" type="button">' . ($html_preview ? $edit_link_label : $add_link_label) . '</button>';
+                $content .= '<button class="button button-small delete-link" data-wpuoptions-wplinkpurge="1" class="link-button" type="button" title="' . esc_attr(__('Delete link', 'wpuoptions')) . '">&times;</button>';
                 $content .= '</div>';
                 break;
             /* Multiple cases */

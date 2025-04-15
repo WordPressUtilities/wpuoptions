@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPU Options\n"
-"POT-Creation-Date: 2025-04-01 19:42+0200\n"
+"POT-Creation-Date: 2025-04-15 19:07+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Darklg <darklg.blog@gmail.com>\n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-KeywordsList: __;_e;_x:1,2c;_n:1,2;esc_attr__\n"
@@ -43,7 +43,7 @@ msgstr ""
 "Avertissement : Les options enregistrées peuvent être différentes des "
 "vôtres. Peut-être ont-elles été modifiées pendant que vous éditiez ?"
 
-#: .././wpuoptions.php:357 .././wpuoptions.php:1267
+#: .././wpuoptions.php:357 .././wpuoptions.php:1270
 msgid "No fields for the moment"
 msgstr "Aucun champ pour le moment"
 
@@ -167,26 +167,34 @@ msgid "Select a value"
 msgstr "Sélectionner une valeur"
 
 #: .././wpuoptions.php:961
+msgid "Add a link"
+msgstr "Ajouter un lien"
+
+#: .././wpuoptions.php:962
 msgid "Edit link"
 msgstr "Modifier le lien"
 
-#: .././wpuoptions.php:1006
+#: .././wpuoptions.php:964
+msgid "Delete link"
+msgstr "Supprimer le lien"
+
+#: .././wpuoptions.php:1009
 msgid "No"
 msgstr "Non"
 
-#: .././wpuoptions.php:1007
+#: .././wpuoptions.php:1010
 msgid "Yes"
 msgstr "Oui"
 
-#: .././wpuoptions.php:1284
+#: .././wpuoptions.php:1287
 msgid "Edit Site:"
 msgstr "Modifier le site :"
 
-#: .././wpuoptions.php:1305
+#: .././wpuoptions.php:1308
 msgid "Incorrect site ID."
 msgstr "ID de site incorrect."
 
-#: .././wpuoptions.php:1309
+#: .././wpuoptions.php:1312
 msgid "The requested site does not exist."
 msgstr "Le site recherché n'existe pas."
 
