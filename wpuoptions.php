@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 8.1.0
+Version: 8.1.1
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -29,7 +29,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '8.1.0',
+        'plugin_version' => '8.1.1',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -80,13 +80,13 @@ class WPUOptions {
             load_plugin_textdomain('wpuoptions', false, $lang_dir);
         }
         $this->plugin_description = __('Friendly interface for website options', 'wpuoptions');
+        $this->options['plugin_publicname'] = __('Site options', 'wpuoptions');
     }
 
     /**
      * Set Options
      */
     private function set_options() {
-        $this->options['plugin_publicname'] = __('Site options', 'wpuoptions');
         $this->main_url = $this->options['plugin_menutype'] . '?page=' . $this->options['plugin_pageslug'];
     }
 
