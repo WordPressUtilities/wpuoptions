@@ -4,7 +4,7 @@
 Plugin Name: WPU Options
 Plugin URI: https://github.com/WordPressUtilities/wpuoptions
 Update URI: https://github.com/WordPressUtilities/wpuoptions
-Version: 8.1.1
+Version: 8.1.2
 Description: Friendly interface for website options
 Author: Darklg
 Author URI: https://darklg.me/
@@ -29,7 +29,7 @@ class WPUOptions {
     private $main_url;
     private $options = array(
         'plugin_name' => 'WPU Options',
-        'plugin_version' => '8.1.1',
+        'plugin_version' => '8.1.2',
         'plugin_userlevel' => 'manage_categories',
         'plugin_menutype' => 'admin.php',
         'plugin_pageslug' => 'wpuoptions-settings'
@@ -1188,9 +1188,15 @@ class WPUOptions {
 
         // Obtaining from Polylang
         if (function_exists('pll_the_languages') && is_object($polylang)) {
-            $poly_langs = $polylang->model->get_languages_list();
+            $poly_langs = pll_the_languages(array(
+                'raw' => 1,
+                'echo' => 0
+            ));
+            usort($poly_langs, function ($a, $b) {
+                return $a['order'] - $b['order'];
+            });
             foreach ($poly_langs as $lang) {
-                $languages[$lang->slug] = $lang->name;
+                $languages[$lang['slug']] = $lang['name'];
             }
         }
 
